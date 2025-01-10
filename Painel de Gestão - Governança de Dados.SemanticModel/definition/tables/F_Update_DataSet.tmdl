@@ -3,6 +3,7 @@ table F_Update_DataSet
 
 	column datasetId
 		dataType: string
+		displayFolder: Colunas
 		lineageTag: 4c6565cd-b056-413c-8811-f459248b0311
 		summarizeBy: none
 		sourceColumn: datasetId
@@ -11,6 +12,7 @@ table F_Update_DataSet
 
 	column datasetName
 		dataType: string
+		displayFolder: Colunas
 		lineageTag: fe06086a-367b-4454-8456-c65aa0b8e710
 		summarizeBy: none
 		sourceColumn: datasetName
@@ -19,6 +21,7 @@ table F_Update_DataSet
 
 	column requestId
 		dataType: string
+		displayFolder: Colunas
 		lineageTag: a2e9a2b4-cb98-41d8-a0f5-448bab397a9d
 		summarizeBy: none
 		sourceColumn: requestId
@@ -27,6 +30,7 @@ table F_Update_DataSet
 
 	column id
 		dataType: string
+		displayFolder: Colunas
 		lineageTag: 269515b7-8246-4c20-a78b-dcda9d811f4a
 		summarizeBy: none
 		sourceColumn: id
@@ -35,6 +39,7 @@ table F_Update_DataSet
 
 	column refreshType
 		dataType: string
+		displayFolder: Colunas
 		lineageTag: 38c632fa-5757-4eb1-b470-f52d5f4be61c
 		summarizeBy: none
 		sourceColumn: refreshType
@@ -44,6 +49,7 @@ table F_Update_DataSet
 	column startTime
 		dataType: dateTime
 		formatString: General Date
+		displayFolder: Colunas
 		lineageTag: 04d23d6b-3ca8-4966-ab49-fbd6e24426f8
 		summarizeBy: none
 		sourceColumn: startTime
@@ -58,6 +64,7 @@ table F_Update_DataSet
 	column endTime
 		dataType: dateTime
 		formatString: General Date
+		displayFolder: Colunas
 		lineageTag: 4fc49079-8774-4ac6-952d-f6a1ac2a12f2
 		summarizeBy: none
 		sourceColumn: endTime
@@ -71,6 +78,7 @@ table F_Update_DataSet
 
 	column status
 		dataType: string
+		displayFolder: Colunas
 		lineageTag: 6d9611ae-9063-4d28-8d9b-38dea61e979b
 		summarizeBy: none
 		sourceColumn: status
@@ -80,6 +88,7 @@ table F_Update_DataSet
 	column DATE_REF
 		dataType: dateTime
 		formatString: Short Date
+		displayFolder: Colunas
 		lineageTag: b67f9b4f-d187-4ac6-8a51-774997c574a3
 		summarizeBy: none
 		sourceColumn: DATE_REF
@@ -90,6 +99,7 @@ table F_Update_DataSet
 
 	column WorkspaceId
 		dataType: string
+		displayFolder: Colunas
 		lineageTag: 31b85631-7379-4dd1-8921-efad06fb08d1
 		summarizeBy: none
 		sourceColumn: WorkspaceId
@@ -99,6 +109,7 @@ table F_Update_DataSet
 	column Time_Finish
 		dataType: dateTime
 		formatString: hh:nn
+		displayFolder: Colunas
 		lineageTag: 4a14a401-a959-4e75-8ac0-ff864a4438f7
 		summarizeBy: none
 		sourceColumn: Time_Finish
@@ -111,6 +122,7 @@ table F_Update_DataSet
 
 	column status2
 		dataType: string
+		displayFolder: Colunas
 		lineageTag: 3a78e25e-f631-4ade-b594-958b94d98c2d
 		summarizeBy: none
 		sourceColumn: status2
@@ -120,6 +132,7 @@ table F_Update_DataSet
 	column Time_Start
 		dataType: dateTime
 		formatString: Long Time
+		displayFolder: Colunas
 		lineageTag: 65290ab7-2fa6-4e47-9d0a-2ea0ef1ca788
 		summarizeBy: none
 		sourceColumn: Time_Start
@@ -129,6 +142,7 @@ table F_Update_DataSet
 		annotation UnderlyingDateTimeDataType = Time
 
 	column Workspace_Name = LOOKUPVALUE(D_Workspaces[name], D_Workspaces[WorkspaceId], F_Update_DataSet[WorkspaceId])
+		displayFolder: Colunas Calculadas
 		lineageTag: 810c46df-fbab-476f-b641-fdad2a7c44d3
 		summarizeBy: none
 
@@ -148,6 +162,7 @@ table F_Update_DataSet
 			    DATAFIM < TODAY() && X = "Desabilitado", "Desabilitado Antigo",
 			    DATAFIM >= TODAY(), X,
 			    F_Update_DataSet[status2])
+		displayFolder: Colunas Calculadas
 		lineageTag: c4e76be6-27a2-466e-a4b9-4a02beaf71bb
 		summarizeBy: none
 

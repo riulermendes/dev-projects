@@ -134,16 +134,15 @@ table Medidas
 		formatString: 0
 		lineageTag: 6c3b56c2-fe6e-45c5-a567-b80f60bcf5e7
 
-	measure Cont_Flow_Failed = ```
+	measure Cont_Flow_Failed =
 			
 			
 			COUNTROWS(
 			    FILTER(
 			        F_Update_DataFlow,
-			        F_Update_DataFlow[status] = "Failed" 
+			        F_Update_DataFlow[status] = "Failed"
 			    )
 			)
-			```
 		formatString: 0
 		lineageTag: 63f2d13c-47b7-4e27-8641-872392848696
 

@@ -1,0 +1,186 @@
+table F_Update_DataSet
+	lineageTag: fc929e79-1d45-4fe0-aefc-fc142a12a6a1
+
+	column datasetId
+		dataType: string
+		lineageTag: 4c6565cd-b056-413c-8811-f459248b0311
+		summarizeBy: none
+		sourceColumn: datasetId
+
+		annotation SummarizationSetBy = Automatic
+
+	column datasetName
+		dataType: string
+		lineageTag: fe06086a-367b-4454-8456-c65aa0b8e710
+		summarizeBy: none
+		sourceColumn: datasetName
+
+		annotation SummarizationSetBy = Automatic
+
+	column requestId
+		dataType: string
+		lineageTag: a2e9a2b4-cb98-41d8-a0f5-448bab397a9d
+		summarizeBy: none
+		sourceColumn: requestId
+
+		annotation SummarizationSetBy = Automatic
+
+	column id
+		dataType: string
+		lineageTag: 269515b7-8246-4c20-a78b-dcda9d811f4a
+		summarizeBy: none
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column refreshType
+		dataType: string
+		lineageTag: 38c632fa-5757-4eb1-b470-f52d5f4be61c
+		summarizeBy: none
+		sourceColumn: refreshType
+
+		annotation SummarizationSetBy = Automatic
+
+	column startTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 04d23d6b-3ca8-4966-ab49-fbd6e24426f8
+		summarizeBy: none
+		sourceColumn: startTime
+
+		variation Variation
+			isDefault
+			relationship: 0b3117b8-612a-4944-9e47-8fcf9ca7ba2c
+			defaultHierarchy: LocalDateTable_88ce7f59-ef77-41b9-9a4b-e9cd14f19ec8.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column endTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 4fc49079-8774-4ac6-952d-f6a1ac2a12f2
+		summarizeBy: none
+		sourceColumn: endTime
+
+		variation Variation
+			isDefault
+			relationship: b3fc8fde-b42a-4cb1-b85c-bd3b215a0b69
+			defaultHierarchy: LocalDateTable_13f78f80-6c0a-4778-a877-5a98b1337bf6.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column status
+		dataType: string
+		lineageTag: 6d9611ae-9063-4d28-8d9b-38dea61e979b
+		summarizeBy: none
+		sourceColumn: status
+
+		annotation SummarizationSetBy = Automatic
+
+	column DATE_REF
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: b67f9b4f-d187-4ac6-8a51-774997c574a3
+		summarizeBy: none
+		sourceColumn: DATE_REF
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column WorkspaceId
+		dataType: string
+		lineageTag: 31b85631-7379-4dd1-8921-efad06fb08d1
+		summarizeBy: none
+		sourceColumn: WorkspaceId
+
+		annotation SummarizationSetBy = Automatic
+
+	column Time_Finish
+		dataType: dateTime
+		formatString: hh:nn
+		lineageTag: 4a14a401-a959-4e75-8ac0-ff864a4438f7
+		summarizeBy: none
+		sourceColumn: Time_Finish
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Time
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column status2
+		dataType: string
+		lineageTag: 3a78e25e-f631-4ade-b594-958b94d98c2d
+		summarizeBy: none
+		sourceColumn: status2
+
+		annotation SummarizationSetBy = Automatic
+
+	column Time_Start
+		dataType: dateTime
+		formatString: Long Time
+		lineageTag: 65290ab7-2fa6-4e47-9d0a-2ea0ef1ca788
+		summarizeBy: none
+		sourceColumn: Time_Start
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Time
+
+	column Workspace_Name = LOOKUPVALUE(D_Workspaces[name], D_Workspaces[WorkspaceId], F_Update_DataSet[WorkspaceId])
+		lineageTag: 810c46df-fbab-476f-b641-fdad2a7c44d3
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column status3 =
+			
+			
+			VAR DATAFIM = F_Update_DataSet[endTime]
+			VAR X = F_Update_DataSet[status2]
+			
+			RETURN
+			
+			SWITCH(
+			    TRUE(),
+			    DATAFIM < TODAY() && X = "Falha", "Falha Antiga",
+			    DATAFIM < TODAY() && X = "Desabilitado", "Desabilitado Antigo",
+			    DATAFIM >= TODAY(), X,
+			    F_Update_DataSet[status2])
+		lineageTag: c4e76be6-27a2-466e-a4b9-4a02beaf71bb
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition F_Update_DataSet = m
+		mode: import
+		source =
+				let
+				    Fonte = Json.Document(Web.Contents("https://api.powerbi.com/v1.0/myorg/",
+				    [
+				        RelativePath = "admin/groups?$top=500&$expand=datasets",
+				        Headers=[Authorization="Bearer " & #"GET Access Token"()]
+				        ])),
+				    #"Convertido para Tabela" = Table.FromRecords({Fonte}),
+				    #"value Expandido" = Table.ExpandRecordColumn(Table.ExpandListColumn(#"Convertido para Tabela", "value"), "value", {"id", "datasets"}, {"WorkspaceId", "datasets"}),
+				    #"Outras Colunas Removidas" = Table.SelectColumns(#"value Expandido",{"WorkspaceId", "datasets"}),
+				    #"datasets Expandido" = Table.ExpandRecordColumn(Table.ExpandListColumn(#"Outras Colunas Removidas", "datasets"), "datasets", {"id", "name"}, {"datasetId", "datasetName"}),
+				    #"Linhas Filtradas1" = Table.SelectRows(#"datasets Expandido", each ([datasetId] <> null)),
+				    #"Invoked Custom Function" = Table.AddColumn(#"Linhas Filtradas1", "DadosProcessados", each #"GET DataSet"([datasetId])),
+				    #"Erros Removidos" = Table.RemoveRowsWithErrors(#"Invoked Custom Function", {"DadosProcessados"}),
+				    #"DadosProcessados Expandido" = Table.ExpandTableColumn(#"Erros Removidos", "DadosProcessados", {"requestId", "id", "refreshType", "startTime", "endTime", "status"/* , "refreshAttempts" */}, {"requestId", "id", "refreshType", "startTime", "endTime", "status"/* , "refreshAttempts" */}),
+				    #"Linhas Filtradas" = Table.SelectRows(#"DadosProcessados Expandido", each ([requestId] <> null)),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Linhas Filtradas",{{"startTime", type datetime}, {"endTime", type datetime}, {"WorkspaceId", type text}, {"datasetId", type text}, {"datasetName", type text}, {"requestId", type text}, {"refreshType", type text}, {"status", type text}}),
+				    #"Inserted Time1" = Table.AddColumn(#"Tipo Alterado", "Time_Start", each DateTime.Time([startTime]), type time),
+				    #"Inserted Time" = Table.AddColumn(#"Inserted Time1", "Time_Finish", each DateTime.Time([endTime]), type time),
+				    #"Inserted Date" = Table.AddColumn(#"Inserted Time", "DATE_REF", each Date.From([startTime]), type date),
+				    #"Added Conditional Column" = Table.AddColumn(#"Inserted Date", "status2", each if [status] = "Completed" then "Finalizado" else if [status] = "Failed" then "Falha" else if [status] = "Disabled" then "Desabilitado" else if [status] = "InProgress" then "Executando" else if [status] = "Unknown" then "Executando" else if [status] = "Cancelled" then "Cancelado" else if "Unknown" then "Executando" else null, type text),
+				    #"Filtered Rows1" = Table.SelectRows(#"Added Conditional Column", each [datasetName] <> "Feature Usage and Adoption" and [datasetName] <> "Purview Hub" and [datasetName] <> "Usage Metrics Report")
+				in
+				    #"Filtered Rows1"
+
+	annotation PBI_ResultType = Exception
+
+	annotation PBI_NavigationStepName = Navigation
+

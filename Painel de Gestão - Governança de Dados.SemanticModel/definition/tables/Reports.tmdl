@@ -1,0 +1,92 @@
+table Reports
+	lineageTag: 1de39613-b1c9-48af-b9c1-4771780a6932
+
+	column WorkspaceId
+		dataType: string
+		lineageTag: 19335511-4854-47ba-b322-99ccf0127388
+		summarizeBy: none
+		sourceColumn: WorkspaceId
+
+		annotation SummarizationSetBy = Automatic
+
+	column reportType
+		dataType: string
+		lineageTag: 82479f34-b22a-4578-8b1a-14f6fb6ec269
+		summarizeBy: none
+		sourceColumn: reportType
+
+		annotation SummarizationSetBy = Automatic
+
+	column datasetId
+		dataType: string
+		lineageTag: f2697e02-1919-4a63-858a-405679cb86b9
+		summarizeBy: none
+		sourceColumn: datasetId
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdDateTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: fbdc73d2-da06-4bcc-84b2-65804c1b23d5
+		summarizeBy: none
+		sourceColumn: createdDateTime
+
+		variation Variation
+			isDefault
+			relationship: 455b047e-d4f0-4cae-84b8-ff448fa56308
+			defaultHierarchy: LocalDateTable_040cbf7f-9611-46bb-9e92-426ad4add322.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column modifiedDateTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: a1954d6f-5ff2-4193-9b8e-4b0c776492af
+		summarizeBy: none
+		sourceColumn: modifiedDateTime
+
+		variation Variation
+			isDefault
+			relationship: 5b60e334-0eb0-4ab0-9ba3-fa8326dcd82d
+			defaultHierarchy: LocalDateTable_296180e6-326a-454c-aed8-0d0e61e8c0a2.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column reportId
+		dataType: string
+		lineageTag: 039f85d2-e183-445d-be29-d4564fa28a8f
+		summarizeBy: none
+		sourceColumn: reportId
+
+		annotation SummarizationSetBy = Automatic
+
+	column reportName
+		dataType: string
+		lineageTag: 2c1f30e8-19cb-480f-a260-af46cea052c6
+		summarizeBy: none
+		sourceColumn: reportName
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Reports-ca9d4d80-e7cc-4e82-95f8-769f85f63f02 = m
+		mode: import
+		queryGroup: Dimensões
+		source =
+				let
+				    Fonte = Workspaces,
+				    #"Expanded datasets" = Table.ExpandListColumn(Fonte, "datasets"),
+				    #"Expanded datasets1" = Table.ExpandRecordColumn(#"Expanded datasets", "datasets", {"id", "name"}, {"datasets.id", "datasets.name"}),
+				    #"Filtered Rows" = Table.SelectRows(#"Expanded datasets1", each [datasets.id] <> null and [datasets.id] <> ""),
+				    #"Outras Colunas Removidas" = Table.SelectColumns(#"Filtered Rows",{"WorkspaceId", "reports"}),
+				    #"reports Expandido" = Table.ExpandRecordColumn(Table.ExpandListColumn(#"Outras Colunas Removidas", "reports"), "reports", {"id", "reportType", "name", "datasetId", "createdDateTime", "modifiedDateTime"}, {"reportId", "reportType", "reportName", "datasetId", "createdDateTime", "modifiedDateTime"}),
+				    #"Filtered Rows1" = Table.SelectRows(#"reports Expandido", each [datasetId] <> null and [datasetId] <> ""),
+				    #"Removed Duplicates" = Table.Distinct(#"Filtered Rows1", {"reportId"}),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Removed Duplicates",{{"WorkspaceId", type text}, {"reportId", type text}, {"reportType", type text}, {"reportName", type text}, {"datasetId", type text}, {"createdDateTime", type datetime}, {"modifiedDateTime", type datetime}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

@@ -1,0 +1,445 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 2457.0970530037694,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 339.462763364087,
+            "y": 553.13186687786992
+          },
+          "nodeIndex": "Dataflows",
+          "nodeLineageTag": "ad9b8546-9a7b-4a88-9f91-963baee513ff",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 13
+        },
+        {
+          "location": {
+            "x": 555.55714285714294,
+            "y": 0
+          },
+          "nodeIndex": "Datasets",
+          "nodeLineageTag": "4a7f18a4-b3b5-4bb8-ac9a-6399ace03f9c",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 10
+        },
+        {
+          "location": {
+            "x": 1263.9714285714285,
+            "y": 224.28571428571431
+          },
+          "nodeIndex": "Reports",
+          "nodeLineageTag": "1de39613-b1c9-48af-b9c1-4771780a6932",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 12
+        },
+        {
+          "location": {
+            "x": 1151.2557947334788,
+            "y": 0
+          },
+          "nodeIndex": "Users",
+          "nodeLineageTag": "6295e7d1-d2ae-49fd-bbe8-9f455d654af1",
+          "size": {
+            "height": 196.89359796740874,
+            "width": 234
+          },
+          "zIndex": 11
+        },
+        {
+          "location": {
+            "x": 2453.3857142857141,
+            "y": 105.71428571428572
+          },
+          "nodeIndex": "Activity",
+          "nodeLineageTag": "73a014f7-b10e-4ef4-9aea-90109c150e80",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 9
+        },
+        {
+          "location": {
+            "x": 1278.9428571428568,
+            "y": 718.42857142857133
+          },
+          "nodeIndex": "F_Update_DataSet",
+          "nodeLineageTag": "0341e72a-0c71-44ee-9ff2-b87f0543485b",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 7
+        },
+        {
+          "location": {
+            "x": 1652.3714285714282,
+            "y": 735.28571428571445
+          },
+          "nodeIndex": "F_Update_DataFlow",
+          "nodeLineageTag": "c2e0df6e-405d-477d-90c1-9a5944ad9eed",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 8,
+          "expandedHeight": 128
+        },
+        {
+          "location": {
+            "x": 1840.6375166637574,
+            "y": 0
+          },
+          "nodeIndex": "WEB_D_CALENDARIO",
+          "nodeLineageTag": "5756922f-80bc-4bbe-b316-a36017c96c6c",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 14
+        },
+        {
+          "location": {
+            "x": 0,
+            "y": 21.000000000000114
+          },
+          "nodeIndex": "D_Workspaces",
+          "nodeLineageTag": "1fe56fb8-9c74-4e03-b80b-515b8b8a2a12",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 2737.3857142857141,
+            "y": 455.21428571428567
+          },
+          "nodeIndex": "Medidas",
+          "nodeLineageTag": "2eb22ddb-84cc-4519-b235-2bdd63b3a03f",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 2246.759945522263,
+            "y": 731.75861346804345
+          },
+          "nodeIndex": "BS_F_TAREFAS_PROGRAMADAS",
+          "nodeLineageTag": "6f981013-66f9-4c2c-8c49-0cc764dec3cd",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 3589.3857142857141,
+            "y": 487.58428907292978
+          },
+          "nodeIndex": "AccessDataset",
+          "nodeLineageTag": "620eb67c-47b0-4192-825f-6c58d48e03af",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 3873.3857142857141,
+            "y": 547.58428907292978
+          },
+          "nodeIndex": "LastUpDate",
+          "nodeLineageTag": "c7433525-8bbe-4df3-9961-5e11d80aa97f",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 4157.3857142857141,
+            "y": 403.87930673402172
+          },
+          "nodeIndex": "F_Disable_Dataset",
+          "nodeLineageTag": "fa2aa48f-716a-45fe-8524-9ae15f679778",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 6
+        }
+      ],
+      "name": "Todas as tabelas",
+      "zoomValue": 55.687227426389782,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    },
+    {
+      "ordinal": 1,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 973.33333333333337,
+            "y": 544
+          },
+          "nodeIndex": "Activity",
+          "nodeLineageTag": "73a014f7-b10e-4ef4-9aea-90109c150e80",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 6
+        },
+        {
+          "location": {
+            "x": 33.462818888888933,
+            "y": 0
+          },
+          "nodeIndex": "D_Workspaces",
+          "nodeLineageTag": "1fe56fb8-9c74-4e03-b80b-515b8b8a2a12",
+          "size": {
+            "height": 176,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 1222.9454468818549,
+            "y": 0
+          },
+          "nodeIndex": "Reports",
+          "nodeLineageTag": "1de39613-b1c9-48af-b9c1-4771780a6932",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 353.890948888889,
+            "y": 22.41387555555557
+          },
+          "nodeIndex": "Datasets",
+          "nodeLineageTag": "4a7f18a4-b3b5-4bb8-ac9a-6399ace03f9c",
+          "size": {
+            "height": 296,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 253.86258764386349,
+            "y": 710.15500172622478
+          },
+          "nodeIndex": "F_Update_DataFlow",
+          "nodeLineageTag": "7a531c60-9217-48ee-be87-459c9ec9bbc7",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 1562.7555563184949,
+            "y": 0
+          },
+          "nodeIndex": "Users",
+          "nodeLineageTag": "6295e7d1-d2ae-49fd-bbe8-9f455d654af1",
+          "size": {
+            "height": 152,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 869.2774361051321,
+            "y": 221.80881981941087
+          },
+          "nodeIndex": "AccessDataset",
+          "nodeLineageTag": "620eb67c-47b0-4192-825f-6c58d48e03af",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 7
+        },
+        {
+          "location": {
+            "x": 565.46189722736176,
+            "y": 430.86982906891785
+          },
+          "nodeIndex": "F_Update_DataSet",
+          "nodeLineageTag": "fc929e79-1d45-4fe0-aefc-fc142a12a6a1",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1400.3908241519566,
+            "y": 1142.7458996991504
+          },
+          "nodeIndex": "F_Disable_Dataset",
+          "nodeLineageTag": "fa2aa48f-716a-45fe-8524-9ae15f679778",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "Layout 1",
+      "zoomValue": 80.273331468512524,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    },
+    {
+      "ordinal": 2,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 550,
+            "y": 24
+          },
+          "nodeIndex": "WEB_D_CALENDARIO",
+          "nodeLineageTag": "5756922f-80bc-4bbe-b316-a36017c96c6c",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 946,
+            "y": 247
+          },
+          "nodeIndex": "F_Update_DataFlow",
+          "nodeLineageTag": "7a531c60-9217-48ee-be87-459c9ec9bbc7",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 178,
+            "y": 243
+          },
+          "nodeIndex": "F_Update_DataSet",
+          "nodeLineageTag": "fc929e79-1d45-4fe0-aefc-fc142a12a6a1",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 564.8684501564594,
+            "y": 751.9342156239295
+          },
+          "nodeIndex": "F_Disable_Dataset",
+          "nodeLineageTag": "fa2aa48f-716a-45fe-8524-9ae15f679778",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "Layout 2",
+      "zoomValue": 63.287087723233995,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    },
+    {
+      "ordinal": 3,
+      "scrollPosition": {
+        "x": 310.39999389648438,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 430,
+            "y": 198
+          },
+          "nodeIndex": "BS_F_TAREFAS_PROGRAMADAS",
+          "nodeLineageTag": "6f981013-66f9-4c2c-8c49-0cc764dec3cd",
+          "size": {
+            "height": 300,
+            "width": 259
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 860,
+            "y": 217
+          },
+          "nodeIndex": "WEB_D_CALENDARIO",
+          "nodeLineageTag": "5756922f-80bc-4bbe-b316-a36017c96c6c",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 2
+        }
+      ],
+      "name": "Layout 3",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "Todas as tabelas",
+  "defaultDiagram": "Todas as tabelas"
+}

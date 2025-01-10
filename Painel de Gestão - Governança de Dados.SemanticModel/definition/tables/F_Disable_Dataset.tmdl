@@ -1,0 +1,95 @@
+table F_Disable_Dataset
+	lineageTag: fa2aa48f-716a-45fe-8524-9ae15f679778
+
+	column datasetId
+		dataType: string
+		lineageTag: 122897ef-7cb7-4e3e-861e-8bbdcc4878cd
+		summarizeBy: none
+		sourceColumn: datasetId
+
+		annotation SummarizationSetBy = Automatic
+
+	column datasetName
+		dataType: string
+		lineageTag: d0808d8c-901f-46ce-8899-dc5c6cf1efd6
+		summarizeBy: none
+		sourceColumn: datasetName
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkspaceId
+		dataType: string
+		lineageTag: 33e835a4-d2ad-4618-bdf1-050223e56454
+		summarizeBy: none
+		sourceColumn: WorkspaceId
+
+		annotation SummarizationSetBy = Automatic
+
+	column Time_Finish
+		dataType: dateTime
+		formatString: Long Time
+		lineageTag: 252d889f-8078-462a-b56f-7e9007a31e85
+		summarizeBy: none
+		sourceColumn: Time_Finish
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Time
+
+	column DATA_REF
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 2a283508-9c9e-443b-ac62-be8c798df29f
+		summarizeBy: none
+		sourceColumn: DATA_REF
+
+		variation Variation
+			isDefault
+			relationship: a0d55c5d-607b-44de-995f-07b4e1a0c7c9
+			defaultHierarchy: LocalDateTable_003a05d4-9687-4118-acec-e212175fb37c.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column STATUS2
+		dataType: string
+		lineageTag: cac9dede-c17f-493d-9ee7-a7de7966f06f
+		summarizeBy: none
+		sourceColumn: STATUS2
+
+		annotation SummarizationSetBy = Automatic
+
+	partition F_Disable_Dataset = m
+		mode: import
+		source =
+				let
+				    Fonte = Json.Document(Web.Contents("https://api.powerbi.com/v1.0/myorg/",
+				    [
+				        RelativePath = "admin/groups?$top=500&$expand=datasets",
+				        Headers=[Authorization="Bearer " & #"GET Access Token"()]
+				        ])),
+				    #"Convertido para Tabela" = Table.FromRecords({Fonte}),
+				    #"value Expandido" = Table.ExpandRecordColumn(Table.ExpandListColumn(#"Convertido para Tabela", "value"), "value", {"id", "datasets"}, {"WorkspaceId", "datasets"}),
+				    #"Outras Colunas Removidas" = Table.SelectColumns(#"value Expandido",{"WorkspaceId", "datasets"}),
+				    #"datasets Expandido" = Table.ExpandRecordColumn(Table.ExpandListColumn(#"Outras Colunas Removidas", "datasets"), "datasets", {"id", "name"}, {"datasetId", "datasetName"}),
+				    #"Linhas Filtradas1" = Table.SelectRows(#"datasets Expandido", each ([datasetId] <> null)),
+				    #"Invoked Custom Function" = Table.AddColumn(#"Linhas Filtradas1", "DadosProcessados", each #"GET DataSet"([datasetId])),
+				    #"Erros Removidos" = Table.RemoveRowsWithErrors(#"Invoked Custom Function", {"DadosProcessados"}),
+				    #"DadosProcessados Expandido" = Table.ExpandTableColumn(#"Erros Removidos", "DadosProcessados", {"requestId", "id", "refreshType", "startTime", "endTime", "status"/* , "refreshAttempts" */}, {"requestId", "id", "refreshType", "startTime", "endTime", "status"/* , "refreshAttempts" */}),
+				    #"Linhas Filtradas" = Table.SelectRows(#"DadosProcessados Expandido", each ([requestId] <> null)),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Linhas Filtradas",{{"startTime", type datetime}, {"endTime", type datetime}, {"WorkspaceId", type text}, {"datasetId", type text}, {"datasetName", type text}, {"requestId", type text}, {"refreshType", type text}, {"status", type text}}),
+				    #"Inserted Time1" = Table.AddColumn(#"Tipo Alterado", "Time_Start", each DateTime.Time([startTime]), type time),
+				    #"Inserted Time" = Table.AddColumn(#"Inserted Time1", "Time_Finish", each DateTime.Time([endTime]), type time),
+				    #"Inserted Date" = Table.AddColumn(#"Inserted Time", "DATE_REF", each Date.From([startTime]), type date),
+				    #"Added Conditional Column" = Table.AddColumn(#"Inserted Date", "status2", each if [status] = "Completed" then "Finalizado" else if [status] = "Failed" then "Falha" else if [status] = "Disabled" then "Desabilitado" else if [status] = "InProgress" then "Executando" else if [status] = "Cancelled" then "Cancelado" else if [status] = "Unknown" then "Executando" else null),
+				    #"Grouped Rows" = Table.Group(#"Added Conditional Column", {"datasetId", "datasetName", "WorkspaceId"}, {{"Time_Finish", each List.Max([Time_Finish]), type time}, {"DATA_REF", each List.Max([DATE_REF]), type date}, {"STATUS2", each List.Max([status2]), type text}}),
+				    #"Sorted Rows" = Table.Sort(#"Grouped Rows",{{"datasetName", Order.Ascending}}),
+				    #"Filtered Rows" = Table.SelectRows(#"Sorted Rows", each ([STATUS2] = "Falha"))
+				in
+				    #"Filtered Rows"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "Painel de Gestão - Governança de Dados"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "e15ad2ea-1491-46bf-aaf8-3c8cd20da5d2"
+  }
+}

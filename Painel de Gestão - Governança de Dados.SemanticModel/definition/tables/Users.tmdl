@@ -1,0 +1,43 @@
+table Users
+	lineageTag: 6295e7d1-d2ae-49fd-bbe8-9f455d654af1
+
+	column groupUserAccessRight
+		dataType: string
+		lineageTag: ed007d6d-03bc-4778-b8a3-35f411bfec60
+		summarizeBy: none
+		sourceColumn: groupUserAccessRight
+
+		annotation SummarizationSetBy = Automatic
+
+	column displayName
+		dataType: string
+		lineageTag: bfbf5327-f49f-476d-985b-574c7d82fe66
+		summarizeBy: none
+		sourceColumn: displayName
+
+		annotation SummarizationSetBy = Automatic
+
+	column UserId
+		dataType: string
+		lineageTag: 9e2a5246-510a-43b5-922c-6dd79a426a0b
+		summarizeBy: none
+		sourceColumn: UserId
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Users-fd9605b2-1dce-463d-a987-570b30563550 = m
+		mode: import
+		queryGroup: Dimensões
+		source =
+				let
+				    Fonte = Workspaces,
+				    #"Outras Colunas Removidas" = Table.SelectColumns(Fonte,{"users"}),
+				    #"users Expandido" = Table.ExpandListColumn(#"Outras Colunas Removidas", "users"),
+				    #"Expanded users" = Table.ExpandRecordColumn(#"users Expandido", "users", {"displayName", "groupUserAccessRight", "identifier"}, {"displayName", "groupUserAccessRight", "UserId"}),
+				    #"Removed Duplicates" = Table.Distinct(#"Expanded users", {"UserId"}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Removed Duplicates",{{"UserId", type text}, {"groupUserAccessRight", type text}, {"displayName", type text}})
+				in
+				    #"Changed Type"
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,99 @@
+table WEB_D_CALENDARIO
+	lineageTag: 5756922f-80bc-4bbe-b316-a36017c96c6c
+	dataCategory: Time
+
+	column Datas
+		dataType: dateTime
+		isKey
+		formatString: Short Date
+		lineageTag: 934ee98b-22d2-4548-ab3e-7257c59298cc
+		summarizeBy: none
+		sourceColumn: Datas
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Ano
+		dataType: int64
+		lineageTag: b053fd1d-869d-4852-aad5-e0afb5da0334
+		summarizeBy: sum
+		sourceColumn: Ano
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Mês
+		dataType: double
+		lineageTag: 9ca716e9-70ab-4476-8f16-509db1169fba
+		summarizeBy: sum
+		sourceColumn: Mês
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Dias do mês'
+		dataType: double
+		lineageTag: 1b9caab9-f214-434c-8e58-c6df3bc53e29
+		summarizeBy: none
+		sourceColumn: Dias do mês
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Início do mês'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 8a7b2408-6024-466b-a6ef-37f0f50870b0
+		summarizeBy: none
+		sourceColumn: Início do mês
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Fim do mês'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: b8a4efe6-3f50-4ab0-b99f-3677f4a8f136
+		summarizeBy: none
+		sourceColumn: Fim do mês
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Nome do mês'
+		dataType: string
+		lineageTag: e91ca1c6-b6c0-4eaa-bbe0-6f3595b15f76
+		summarizeBy: none
+		sourceColumn: Nome do mês
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Nome do dia'
+		dataType: string
+		lineageTag: b178a16e-69c2-4c45-8028-3a55c7dff688
+		summarizeBy: none
+		sourceColumn: Nome do dia
+
+		annotation SummarizationSetBy = Automatic
+
+	partition WEB_D_CALENDARIO = m
+		mode: import
+		source =
+				let
+				    Fonte = PowerBI.Dataflows(null),
+				    #"8b1431d2-e713-4668-82ab-45de418f1585" = Fonte{[workspaceId="8b1431d2-e713-4668-82ab-45de418f1585"]}[Data],
+				    #"e1aff3e5-f311-4703-b86d-bfa1c94ce664" = #"8b1431d2-e713-4668-82ab-45de418f1585"{[dataflowId="e1aff3e5-f311-4703-b86d-bfa1c94ce664"]}[Data],
+				    WEB_D_CALENDARIO1 = #"e1aff3e5-f311-4703-b86d-bfa1c94ce664"{[entity="WEB_D_CALENDARIO"]}[Data]
+				in
+				    WEB_D_CALENDARIO1
+
+	annotation PBI_ResultType = Table
+

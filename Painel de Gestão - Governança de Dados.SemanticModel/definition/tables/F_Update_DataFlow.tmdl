@@ -1,0 +1,151 @@
+table F_Update_DataFlow
+	lineageTag: 7a531c60-9217-48ee-be87-459c9ec9bbc7
+
+	column dataflowId
+		dataType: string
+		lineageTag: 32096820-a78a-4146-b677-bef58c68a1d4
+		summarizeBy: none
+		sourceColumn: dataflowId
+
+		annotation SummarizationSetBy = Automatic
+
+	column dataflowName
+		dataType: string
+		lineageTag: 3b4cca60-bac9-45e3-8815-67849bbbb9e6
+		summarizeBy: none
+		sourceColumn: dataflowName
+
+		annotation SummarizationSetBy = Automatic
+
+	column id
+		dataType: string
+		lineageTag: 144357a8-5c85-46a2-a87b-b9ceb69e12e2
+		summarizeBy: none
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column refreshType
+		dataType: string
+		lineageTag: a03804ee-d741-465d-9076-d9f17d72aa83
+		summarizeBy: none
+		sourceColumn: refreshType
+
+		annotation SummarizationSetBy = Automatic
+
+	column startTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: c55222e6-9aaf-43f3-8b4a-8a6ab1d28801
+		summarizeBy: none
+		sourceColumn: startTime
+
+		variation Variation
+			isDefault
+			relationship: 68e0c79d-f51d-47b5-981f-1b389e7bb217
+			defaultHierarchy: LocalDateTable_f94bf9aa-80ef-4627-afe0-d202e40a81ba.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column endTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 23eda203-b695-44aa-b6e9-95b10a41fc3d
+		summarizeBy: none
+		sourceColumn: endTime
+
+		variation Variation
+			isDefault
+			relationship: 586e44cc-74e9-4294-b5f2-93476fcbeb6e
+			defaultHierarchy: LocalDateTable_41290b48-fba4-4f86-846c-f79a1caf272e.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column status
+		dataType: string
+		lineageTag: f3948c5f-db00-4eb2-bcca-bbcaa5b82ddd
+		summarizeBy: none
+		sourceColumn: status
+
+		annotation SummarizationSetBy = Automatic
+
+	column DATE_REF
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 5b7a07b1-0943-4d30-8ee2-c35012eba105
+		summarizeBy: none
+		sourceColumn: DATE_REF
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column WorkspaceId
+		dataType: string
+		lineageTag: 79a8008e-2d80-42cd-8a1e-6a59abaf7f51
+		summarizeBy: none
+		sourceColumn: WorkspaceId
+
+		annotation SummarizationSetBy = Automatic
+
+	column Time_Finish
+		dataType: dateTime
+		formatString: hh:nn
+		lineageTag: e625a468-d65f-4dcb-9574-f97c8ae5ed38
+		summarizeBy: none
+		sourceColumn: Time_Finish
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Time
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column status2
+		dataType: string
+		lineageTag: 7c7d600c-2034-4e58-a1f1-442cf43a1949
+		summarizeBy: none
+		sourceColumn: status2
+
+		annotation SummarizationSetBy = Automatic
+
+	column Time_Start
+		dataType: dateTime
+		formatString: Long Time
+		lineageTag: 5b403a9b-0576-427c-98e8-15f5f542f449
+		summarizeBy: none
+		sourceColumn: Time_Start
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Time
+
+	partition F_Update_DataFlow = m
+		mode: import
+		source =
+				let
+				    Fonte = Json.Document(Web.Contents("https://api.powerbi.com/v1.0/myorg/",
+				    [
+				        RelativePath = "admin/groups?$top=500&$expand=dataflows",
+				        Headers=[Authorization="Bearer " & #"GET Access Token"()]
+				        ])),
+				    #"Convertido para Tabela" = Table.FromRecords({Fonte}),
+				    #"value Expandido" = Table.ExpandRecordColumn(Table.ExpandListColumn(#"Convertido para Tabela", "value"), "value", {"id", "dataflows"}, {"WorkspaceId", "dataflows"}),
+				    #"Outras Colunas Removidas" = Table.SelectColumns(#"value Expandido",{"WorkspaceId", "dataflows"}),
+				    #"datasets Expandido" = Table.ExpandRecordColumn(Table.ExpandListColumn(#"Outras Colunas Removidas", "dataflows"), "dataflows", {"objectId", "name"}, {"dataflowId", "dataflowName"}),
+				    #"Linhas Filtradas1" = Table.SelectRows(#"datasets Expandido", each ([dataflowId] <> null)),
+				    #"Invoked Custom Function" = Table.AddColumn(#"Linhas Filtradas1", "DadosProcessados", each #"GET DataFlow"([dataflowId])),
+				
+				    #"DadosProcessados Expandido" = Table.ExpandTableColumn(#"Invoked Custom Function", "DadosProcessados", {"id", "refreshType", "startTime", "endTime", "status"}, {"id", "refreshType", "startTime", "endTime", "status"}),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"DadosProcessados Expandido",{{"startTime", type datetime}, {"endTime", type datetime}, {"refreshType", type text}, {"status", type text}, {"id", type text}, {"dataflowName", type text}, {"dataflowId", type text}, {"WorkspaceId", type text}}),
+				    #"Inserted Time1" = Table.AddColumn(#"Tipo Alterado", "Time_Start", each DateTime.Time([startTime]), type time),
+				    #"Inserted Time" = Table.AddColumn(#"Inserted Time1", "Time_Finish", each DateTime.Time([endTime]), type time),
+				    #"Inserted Date" = Table.AddColumn(#"Inserted Time", "DATE_REF", each Date.From([startTime]), type date),
+				    #"Added Conditional Column" = Table.AddColumn(#"Inserted Date", "status2", each if [status] = "Success" then "Finalizado" else if [status] = "Failed" then "Falha" else if [status] = "TimedOut" then "Falha" else if [status] = "CancelledSystemFailure" then "Cancelado" else if [status] = "InProgress" then "Executando" else null, type text)
+				in
+				    #"Added Conditional Column"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

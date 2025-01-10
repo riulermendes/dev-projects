@@ -1,0 +1,875 @@
+table Medidas
+	lineageTag: 2eb22ddb-84cc-4519-b235-2bdd63b3a03f
+
+	measure 'FLOW - Quantidade de Finalizado' =
+			
+			
+			COUNTROWS(
+			    FILTER(
+			        F_Update_DataFlow,
+			        F_Update_DataFlow[status] = "Success" &&
+			        F_Update_DataFlow[DATE_REF]= TODAY()
+			    )
+			)
+		formatString: 0
+		displayFolder: MONITORAMENTO
+		lineageTag: 5d801160-98cb-4354-a08c-36836fe38e09
+
+	measure 'FLOW - Quantidade de Falhas' = ```
+			
+			
+			VAR QTDE = 
+			
+			CALCULATE(
+			        COUNTROWS(
+			            FILTER(
+			                F_Update_DataFlow,
+			                F_Update_DataFlow[status2] IN {"Falha", "Cancelado"}
+			            )
+			        ),
+			        ALLEXCEPT(Datasets, Datasets[datasetName])
+			)
+			RETURN
+			
+			
+			COALESCE(CALCULATE(QTDE),
+			
+			IF(
+			    COUNTROWS(
+			        FILTER(
+			            F_Update_DataFlow,
+			            F_Update_DataFlow[status2] = "Executando" <> BLANK()
+			            )
+			    ) <> BLANK(), 0,
+			    BLANK()
+			    )
+			)
+			```
+		formatString: 0
+		displayFolder: MONITORAMENTO
+		lineageTag: 321f0c73-e142-4503-95a6-72e842a99eec
+
+	measure 'FLOW - Quantidade Cancelado' =
+			
+			COUNTROWS(
+			    FILTER(
+			        F_Update_DataFlow,
+			        F_Update_DataFlow[status2] = "Cancelado"
+			    )
+			)
+		formatString: 0
+		displayFolder: MONITORAMENTO
+		lineageTag: a14c0e58-a773-40cc-8cff-5d069f2e1be9
+
+	measure 'Qtde. View Report' = ```
+			
+			
+			SUMX(
+			    AccessDataset,
+			    VAR UsuarioAtual = AccessDataset[UserId]
+			    VAR DatasetAtual = AccessDataset[datasetId]
+			    RETURN
+			    COALESCE(
+			            CALCULATE(
+			                COUNTROWS(Activity),
+			                Activity[Activity]="ViewReport",
+			                Activity[UserId] = UsuarioAtual,
+			                Activity[DatasetId] = DatasetAtual
+			            ),
+			            0
+			        )
+			    )
+			
+			```
+		formatString: #,0
+		lineageTag: 56067ef7-d920-4ea6-83c9-a44e22a177f7
+
+	measure 'Qtde. Exportações' = CALCULATE(COUNT(Activity[Activity]),Activity[Activity]="ExportReport")
+		formatString: #,0
+		lineageTag: 36e2e224-9b93-4352-bc97-dac167c2441a
+
+	measure 'Qtde. Atividades' = COUNT(Activity[RequestId])
+		formatString: 0
+		lineageTag: 3add5b6d-2239-475d-a1db-b2e333b22543
+
+	measure '% Variação' = ```
+			/*
+			VAR DataOntem =TODAY() -1
+			VAR FuncDiaAtual = 
+			    CALCULATE(
+			        COUNTROWS(F_Update_DataFlow),
+			        F_Update_DataFlow[status] = "Success" &&
+			        F_Update_DataFlow[DATE_REF].[Date] = TODAY()
+			    )
+			VAR FuncDiasAnterior = 
+			    CALCULATE(
+			        COUNTROWS(F_Update_DataFlow),
+			        F_Update_DataFlow[status] = "Success" &&
+			        PREVIOUSDAY(F_Update_DataFlow[DATE_REF].[Date])
+			    )
+			RETURN
+			    IF(
+			        FuncDiasAnterior > 0,
+			        DIVIDE(FuncDiaAtual - FuncDiasAnterior, FuncDiasAnterior, 0),
+			        BLANK()
+			    ) */
+			```
+		formatString: 0
+		lineageTag: 4dbd4aa1-1fb8-437a-a32b-10ac6a0d624c
+
+	measure 'mes anterior fun' = ```
+			/*
+			VAR FuncDiasAnterior =
+			    CALCULATE(
+			        COUNTROWS(
+			            FILTER(
+			                F_Update_DataFlow,
+			                F_Update_DataFlow[status] = "Success"  &&
+			                F_Update_DataFlow[DATE_REF].[Date] = DataOntem
+			                
+			            )
+			        )
+			    ) */
+			```
+		formatString: 0
+		lineageTag: 6c3b56c2-fe6e-45c5-a567-b80f60bcf5e7
+
+	measure Cont_Flow_Failed = ```
+			
+			
+			COUNTROWS(
+			    FILTER(
+			        F_Update_DataFlow,
+			        F_Update_DataFlow[status] = "Failed" 
+			    )
+			)
+			```
+		formatString: 0
+		lineageTag: 63f2d13c-47b7-4e27-8641-872392848696
+
+	measure Cont_Flow_Success = ```
+			
+			
+			COUNTROWS(
+			    FILTER(
+			        F_Update_DataFlow,
+			        F_Update_DataFlow[status] = "Success" 
+			    )
+			)
+			```
+		formatString: 0
+		lineageTag: 276f3870-8a75-4ab6-852e-b1fa817e3386
+
+	measure Cont_Flow_Cancelada =
+			
+			
+			COUNTROWS(
+			    FILTER(
+			        F_Update_DataFlow,
+			        F_Update_DataFlow[status] = "CancelledSystemFailure"
+			    )
+			)
+		formatString: 0
+		lineageTag: 1bb138c9-2232-44b3-978a-189ea50f6cb6
+
+	measure Cont_Set_Success = ```
+			
+			
+			COUNTROWS(
+			    FILTER(
+			        F_Update_DataSet,
+			        F_Update_DataSet[status]= "Completed" 
+			    )
+			)
+			```
+		formatString: 0
+		lineageTag: fedcd100-4930-4040-9497-b0c046878f56
+
+	measure Cont_Set_Failed = ```
+			
+			
+			COUNTROWS(
+			    FILTER(
+			        F_Update_DataSet,
+			        F_Update_DataSet[status]= "Failed" 
+			    )
+			)
+			```
+		formatString: 0
+		lineageTag: c128f9dd-a12b-4f4e-8135-dc8b800fabc3
+
+	measure Cont_Set_Disabled = ```
+			
+			
+			COUNTROWS(
+			    FILTER(
+			        F_Update_DataSet,
+			        F_Update_DataSet[status]= "Disabled" 
+			    )
+			)
+			```
+		formatString: 0
+		lineageTag: 2fdd0e33-fb9d-4a37-ae3d-41be5450e1b5
+
+	measure 'DATASET - Quantidade de desabilitado' = ```
+			
+			VAR RecentEndTime =
+			    CALCULATETABLE(
+			        ADDCOLUMNS(
+			            SUMMARIZE(
+			                F_Update_DataSet,
+			                F_Update_DataSet[Workspace_Name],
+			                F_Update_DataSet[datasetName],
+			                F_Update_DataSet[status3],
+			                F_Update_DataSet[refreshType]
+			            ),
+			            "LastEndTime", 
+			                CALCULATE(
+			                    MAX(F_Update_DataSet[endTime]),
+			                    F_Update_DataSet[status3] <> "",
+			                    ALL(WEB_D_CALENDARIO) -- Ignora filtros de calendário
+			                ),
+			            "Status",
+			            CALCULATE(
+			                    MAX(F_Update_DataSet[status3]),
+			                    ALL(WEB_D_CALENDARIO)) -- Ignora filtros de calendário
+			            ),
+			        F_Update_DataSet[status3] IN {"Falha Antiga", "Desabilitado"},
+			        ALL(WEB_D_CALENDARIO) -- Garante análise sobre todo o histórico
+			    )
+			
+			VAR FilteredDesabilitado =
+			    FILTER(
+			        RecentEndTime,
+			        F_Update_DataSet[status3] = "Desabilitado"
+			    )
+			
+			VAR FilteredFalha =
+			    FILTER(
+			        RecentEndTime,
+			        F_Update_DataSet[status3] = "Falha Antiga" &&
+			        F_Update_DataSet[refreshType] = "Scheduled" &&
+			        ([LastEndTime] < TODAY() &&  [LastEndTime] > TODAY() - DAY(30))
+			    )
+			
+			RETURN
+			    COUNTROWS(FilteredDesabilitado) + COUNTROWS(FilteredFalha)
+			
+			```
+		formatString: 0
+		displayFolder: MONITORAMENTO
+		lineageTag: 3eceae5e-2ec5-4d28-b670-2daadeb9485f
+
+	measure 'DATASET - Quantidade de Falhas' = ```
+			
+			COALESCE(
+			    COUNTROWS(
+			        FILTER(
+			            F_Update_DataSet,
+			            F_Update_DataSet[status2]= "Falha"
+			        )
+			    ),
+			    IF(
+			        COUNTROWS(
+			            FILTER(
+			                F_Update_DataSet,
+			                F_Update_DataSet[status2] = "Executando" <> BLANK()
+			                )
+			        ) <> BLANK(), BLANK(),
+			        BLANK()
+			        )
+			    )
+			
+			```
+		formatString: 0
+		displayFolder: MONITORAMENTO
+		lineageTag: 3cde4ecd-592d-4ff3-9e07-e2d2ca1b5ba5
+
+	measure 'DATASET - Quantidade de Finalizados' = ```
+			
+			
+			COUNTROWS(
+			    FILTER(
+			        F_Update_DataSet,
+			        F_Update_DataSet[status2]= "Finalizado" 
+			    )
+			)
+			```
+		formatString: 0
+		displayFolder: MONITORAMENTO
+		lineageTag: a67dfb09-7cd8-4c9a-9149-382bbe4a260b
+
+	measure rank_painel = ```
+			
+			IF(
+			    RANKX(ALL(Activity[ReportName]),[Qtde. Atividades], ,DESC) <= 10 , [Qtde. Atividades],BLANK()) 
+			```
+		formatString: 0
+		lineageTag: 91c287f6-f9c6-41d0-8bbc-3b62c08f3edf
+
+	measure 'MAT - Quantidade de Finalizados' =
+			
+			
+			CALCULATE(
+			        COUNTROWS(
+			            FILTER(
+			                BS_F_TAREFAS_PROGRAMADAS,
+			                BS_F_TAREFAS_PROGRAMADAS[STATUS] = "Pronto" &&
+			                (HOUR(BS_F_TAREFAS_PROGRAMADAS[ENVIADO]) >= 19 &&
+			                BS_F_TAREFAS_PROGRAMADAS[DATA_REF] = TODAY() - 1) ||
+			
+			                (HOUR(BS_F_TAREFAS_PROGRAMADAS[ENVIADO]) <= 6 &&
+			                BS_F_TAREFAS_PROGRAMADAS[DATA_REF] = TODAY())
+			            )
+			        ),
+			        ALLCROSSFILTERED(WEB_D_CALENDARIO)
+			)
+		formatString: 0
+		displayFolder: MONITORAMENTO
+		lineageTag: aec26cf9-2156-499b-a984-ecc6c6975ba7
+
+	measure 'MAT - Quantidade de Falhas' =
+			
+			CALCULATE(
+			        COUNTROWS(
+			            FILTER(
+			                BS_F_TAREFAS_PROGRAMADAS,
+			                BS_F_TAREFAS_PROGRAMADAS[STATUS] = "Erro" &&
+			                (HOUR(BS_F_TAREFAS_PROGRAMADAS[ENVIADO]) >= 19 &&
+			                BS_F_TAREFAS_PROGRAMADAS[DATA_REF] = TODAY() - 1) ||
+			
+			                (HOUR(BS_F_TAREFAS_PROGRAMADAS[ENVIADO]) <= 6 &&
+			                BS_F_TAREFAS_PROGRAMADAS[DATA_REF] = TODAY())
+			            )
+			        ),
+			        ALLCROSSFILTERED(WEB_D_CALENDARIO),
+			        BS_F_TAREFAS_PROGRAMADAS[STATUS] = "Erro"
+			)
+		formatString: 0
+		displayFolder: MONITORAMENTO
+		lineageTag: 66af77ff-87f5-4b63-af97-b9a8dda0eaeb
+
+	measure 'MAT - Quantidade de Contabilizando' =
+			
+			CALCULATE(
+			        COUNTROWS(
+			            FILTER(
+			                BS_F_TAREFAS_PROGRAMADAS,
+			                BS_F_TAREFAS_PROGRAMADAS[STATUS] = "Contabilizado" &&
+			                (HOUR(BS_F_TAREFAS_PROGRAMADAS[ENVIADO]) >= 18 &&
+			                BS_F_TAREFAS_PROGRAMADAS[DATA_REF] = TODAY() - 1) ||
+			
+			                (HOUR(BS_F_TAREFAS_PROGRAMADAS[ENVIADO]) <= 17 &&
+			                BS_F_TAREFAS_PROGRAMADAS[DATA_REF] = TODAY())
+			            )
+			        ),
+			        ALLCROSSFILTERED(WEB_D_CALENDARIO),
+			        BS_F_TAREFAS_PROGRAMADAS[STATUS] = "Contabilizado"
+			)
+		formatString: 0
+		displayFolder: MONITORAMENTO
+		lineageTag: c4331d60-96d0-4e70-ab7f-7096a877da17
+
+	measure 'MAT - Quantidade de Executando' =
+			
+			CALCULATE(
+			        COUNTROWS(
+			            FILTER(
+			                BS_F_TAREFAS_PROGRAMADAS,
+			                BS_F_TAREFAS_PROGRAMADAS[STATUS] = "Executado" &&
+			                (HOUR(BS_F_TAREFAS_PROGRAMADAS[ENVIADO]) >= 18 &&
+			                BS_F_TAREFAS_PROGRAMADAS[DATA_REF] = TODAY() - 1) ||
+			
+			                (HOUR(BS_F_TAREFAS_PROGRAMADAS[ENVIADO]) <= 18 &&
+			                BS_F_TAREFAS_PROGRAMADAS[DATA_REF] = TODAY())
+			            )
+			        ),
+			        ALLCROSSFILTERED(WEB_D_CALENDARIO),
+			        BS_F_TAREFAS_PROGRAMADAS[STATUS2] = "Executando"
+			)
+		formatString: 0
+		displayFolder: MONITORAMENTO
+		lineageTag: 95dad0c9-6e15-443e-88c0-a0f0bc6c3d32
+
+	measure 'MAT - Status' = ```
+			
+			
+			
+			VAR Hoje = TODAY()
+			VAR Ontem = Hoje - 1
+			
+			RETURN
+			CALCULATE(
+			    MAXX(BS_F_TAREFAS_PROGRAMADAS, BS_F_TAREFAS_PROGRAMADAS[STATUS2]),
+			    FILTER(
+			        BS_F_TAREFAS_PROGRAMADAS,
+			        (
+			            HOUR(IF(ISBLANK(BS_F_TAREFAS_PROGRAMADAS[ENVIADO]), TIME(0, 0, 0), BS_F_TAREFAS_PROGRAMADAS[ENVIADO])) >= 18 &&
+			            BS_F_TAREFAS_PROGRAMADAS[DATA_REF] = Ontem
+			        ) ||
+			        (
+			            HOUR(IF(ISBLANK(BS_F_TAREFAS_PROGRAMADAS[ENVIADO]), TIME(0, 0, 0), BS_F_TAREFAS_PROGRAMADAS[ENVIADO])) <= 18 &&
+			            BS_F_TAREFAS_PROGRAMADAS[DATA_REF] = Hoje
+			        )
+			    ),
+			    REMOVEFILTERS(WEB_D_CALENDARIO[Datas])
+			)
+			
+			
+			```
+		displayFolder: MONITORAMENTO
+		lineageTag: f528d0ec-8b47-4751-b81a-2ab5147a32aa
+
+	measure 'Quantidade Distinta de Usuários' = ```
+			
+			
+			DISTINCTCOUNT(AccessDataset[UserId])
+			
+			/* SUMX(
+			    AccessDataset,
+			    VAR UsuarioAtual = AccessDataset[identifier]
+			    RETURN
+			    COALESCE(
+			            CALCULATE(
+			                DISTINCTCOUNT(Activity[UserId]),
+			                Activity[Activity]="ViewReport",
+			                Activity[UserId] = UsuarioAtual
+			            ),
+			        0 
+			    ) */
+			
+			```
+		formatString: 0
+		lineageTag: 53e654c3-e347-4ace-94c9-d21f56e0caa3
+
+	measure 'DATASET - Verificar Correção' = ```
+			
+			
+			VAR DIAS = COUNTROWS(WEB_D_CALENDARIO)
+			VAR QTD_V = 
+			
+			COALESCE(
+			    COUNTROWS(
+			            F_Update_DataSet
+			    ),
+			    IF(
+			        COUNTROWS(
+			            FILTER(
+			                F_Update_DataSet,
+			                F_Update_DataSet[refreshType] = "Scheduled" &&
+			                F_Update_DataSet[status2] <> "Executando"
+			                )
+			        ) <> BLANK(), 0,
+			        BLANK()
+			        )
+			    )
+			
+			VAR HORA_FALHA = 
+			CALCULATE(
+			    MAX(F_Update_DataSet[endTime]),
+			    F_Update_DataSet[status2] = "Falha",
+			    F_Update_DataSet[DATE_REF] = TODAY(),
+			    ALLEXCEPT(Datasets, Datasets[datasetName])
+			)
+			
+			VAR HORA_CORRECT = 
+			
+			    CALCULATE(
+			        MAX(F_Update_DataSet[endTime]),
+			        F_Update_DataSet[status2] = "Finalizado",
+			        ALLEXCEPT(Datasets, Datasets[datasetName]),
+			        F_Update_DataSet[DATE_REF] = TODAY()
+			
+			    )
+			    
+			VAR EXECUTANDO = 
+			CALCULATE(
+			    MAX(F_Update_DataSet[endTime]),
+			    F_Update_DataSet[status2] = "Executando" <> BLANK(),
+			    F_Update_DataSet[DATE_REF] = TODAY(),
+			    ALLEXCEPT(Datasets, Datasets[datasetName])
+			)
+			
+			
+			RETURN 
+			    SWITCH(
+			        TRUE(),
+			      ---  ISBLANK(QTD_V) && ISBLANK(HORA_FALHA) && ISBLANK(HORA_CORRECT), "Desabilitado",
+			        QTD_V = 1 && HORA_FALHA <> BLANK(), "Não Houve",
+			        QTD_V >= 1 && HORA_FALHA <> BLANK() && EXECUTANDO <> BLANK(), "Executando",
+			        QTD_V > 1 && HORA_FALHA > HORA_CORRECT && ISBLANK(HORA_CORRECT), "Falhou",
+			        QTD_V = 1 && HORA_FALHA > HORA_CORRECT && ISBLANK(HORA_CORRECT), "Falhou",
+			        QTD_V > 1 && HORA_FALHA < HORA_CORRECT && HORA_CORRECT <> BLANK(), "Finalizado",
+			        QTD_V > 1 && HORA_FALHA < HORA_CORRECT && HORA_CORRECT <> BLANK(), "Finalizado",
+			        BLANK())
+			
+			
+			
+			```
+		displayFolder: MONITORAMENTO
+		lineageTag: 85060048-cda1-4955-b5d5-789ad505b20d
+
+	measure 'FLOW - Verificar Correção' = ```
+			
+			
+			VAR DIAS = COUNTROWS(WEB_D_CALENDARIO)
+			VAR QTD_V = 
+			
+			CALCULATE(
+			    COALESCE(
+			        COUNTROWS(
+			                F_Update_DataFlow
+			        ),
+			        IF(
+			            COUNTROWS(
+			                FILTER(
+			                    F_Update_DataFlow,
+			                    F_Update_DataFlow[refreshType] = "Scheduled" &&
+			                    F_Update_DataFlow[status2] <> "Executando"
+			                    )
+			            ) <> BLANK(), 0,
+			            BLANK()
+			            )
+			        ),
+			    ALLEXCEPT(Datasets, Datasets[datasetName])
+			)
+			
+			VAR HORA_FALHA = 
+			    CALCULATE(
+			        MAX(F_Update_DataFlow[endTime]),
+			        F_Update_DataFlow[status2] = "Falha",
+			        F_Update_DataFlow[DATE_REF] = TODAY(),
+			        ALLEXCEPT(Dataflows, Dataflows[dataflowName])
+			    )
+			
+			VAR HORA_CORRECT = 
+			    CALCULATE(
+			        MAX(F_Update_DataFlow[endTime]),
+			        F_Update_DataFlow[status2] = "Finalizado",
+			        ALLEXCEPT(Dataflows, Dataflows[dataflowName]),
+			        F_Update_DataFlow[DATE_REF] = TODAY()
+			
+			    )
+			
+			VAR EXECUTANDO = 
+			    CALCULATE(
+			        MAX(F_Update_DataFlow[startTime]),
+			        F_Update_DataFlow[status2] = "Executando" <> BLANK(),
+			        F_Update_DataFlow[DATE_REF] = TODAY(),
+			        ALLEXCEPT(Dataflows, Dataflows[dataflowName])
+			    )
+			
+			RETURN 
+			    SWITCH(
+			        TRUE(),
+			        QTD_V = 1 && HORA_FALHA <> BLANK() && ISBLANK(EXECUTANDO), "Não Houve",
+			        QTD_V >= 1 && HORA_FALHA <> BLANK() && EXECUTANDO <> BLANK(), "Executando",
+			        QTD_V > 1 && HORA_FALHA > HORA_CORRECT && ISBLANK(HORA_CORRECT), "Falhou",
+			        QTD_V = 1 && HORA_FALHA > HORA_CORRECT && ISBLANK(HORA_CORRECT), "Falhou",
+			        QTD_V > 1 && HORA_FALHA < HORA_CORRECT && HORA_CORRECT <> BLANK(), "Finalizado",
+			        QTD_V > 1 && HORA_FALHA < HORA_CORRECT && HORA_CORRECT <> BLANK(), "Finalizado",
+			        QTD_V > 1 && HORA_CORRECT <> BLANK(), "Atualizado Anteriormente",
+			        BLANK())
+			
+			
+			
+			```
+		displayFolder: MONITORAMENTO
+		lineageTag: af618870-39b3-4ecc-b817-da4157cba485
+
+	measure '@ Quantidade de Usuários' = ```
+			
+			
+			VAR DAYS = DISTINCTCOUNT(Activity[Data_Ref])
+			VAR MAXDAY = MAX(Activity[Data_Ref])
+			VAR TEXT1 = "Quantidade de usuários com atividades no dia de hoje"
+			VAR TEXT2 = "Quantidade de usuários com atividades nos últimos " & DAYS & " dias."
+			VAR TEXT3 = "Quantidade de usuários com atividades no dia " & MAXDAY & "."
+			
+			
+			RETURN 
+			IF(DAYS = 1 && MAXDAY = TODAY(), TEXT1,
+			    IF(DAYS = 1, TEXT3, TEXT2))
+			```
+		displayFolder: Títulos
+		lineageTag: 0dbd1a05-426e-4e0a-a2f2-941e6e227853
+
+	measure '@ Quantidade de Dashboards' = ```
+			
+			
+			VAR DAYS = DISTINCTCOUNT(Activity[Data_Ref])
+			VAR MAXDAY = MAX(Activity[Data_Ref])
+			VAR TEXT1 = "Quantidade de dashboards com atividades no dia de hoje"
+			VAR TEXT2 = "Quantidade de dashboards com atividades nos últimos " & DAYS & " dias."
+			VAR TEXT3 = "Quantidade de dashboards com atividades no dia " & MAXDAY & "."
+			
+			
+			RETURN 
+			IF(DAYS = 1 && MAXDAY = TODAY(), TEXT1,
+			    IF(DAYS = 1, TEXT3, TEXT2))
+			```
+		displayFolder: Títulos
+		lineageTag: f1f0fc7f-82c3-484c-83d1-22b00f87c39e
+
+	measure '@ Quantidade de Workspaces' = ```
+			
+			
+			VAR DAYS = DISTINCTCOUNT(Activity[Data_Ref])
+			VAR MAXDAY = MAX(Activity[Data_Ref])
+			VAR TEXT1 = "Quantidade de workspaces com atividades no dia de hoje"
+			VAR TEXT2 = "Quantidade de workspaces com atividades nos últimos " & DAYS & " dias."
+			VAR TEXT3 = "Quantidade de workspaces com atividades no dia " & MAXDAY & "."
+			
+			
+			RETURN 
+			IF(DAYS = 1 && MAXDAY = TODAY(), TEXT1,
+			    IF(DAYS = 1, TEXT3, TEXT2))
+			```
+		displayFolder: Títulos
+		lineageTag: 21e7885b-cef2-4853-90ac-8f1c99d9a674
+
+	measure '@ Quantidade de Visualizações' = ```
+			
+			
+			VAR DAYS = DISTINCTCOUNT(Activity[Data_Ref])
+			VAR MAXDAY = MAX(Activity[Data_Ref])
+			VAR TEXT1 = "Quantidade de visualizações no dia de hoje"
+			VAR TEXT2 = "Quantidade de visualizações nos últimos " & DAYS & " dias."
+			VAR TEXT3 = "Quantidade de visualizações no dia " & MAXDAY & "."
+			
+			
+			RETURN 
+			IF(DAYS = 1 && MAXDAY = TODAY(), TEXT1,
+			    IF(DAYS = 1, TEXT3, TEXT2))
+			```
+		displayFolder: Títulos
+		lineageTag: f30fa243-43e1-474f-828a-fa68356be586
+
+	measure '@ Quantidade de Exportações' = ```
+			
+			
+			VAR DAYS = DISTINCTCOUNT(Activity[Data_Ref])
+			VAR MAXDAY = MAX(Activity[Data_Ref])
+			VAR TEXT1 = "Quantidade de exportações no dia de hoje"
+			VAR TEXT2 = "Quantidade de exportações nos últimos " & DAYS & " dias."
+			VAR TEXT3 = "Quantidade de exportações no dia " & MAXDAY & "."
+			
+			
+			RETURN 
+			IF(DAYS = 1 && MAXDAY = TODAY(), TEXT1,
+			    IF(DAYS = 1, TEXT3, TEXT2))
+			```
+		displayFolder: Títulos
+		lineageTag: e731f295-783c-4ee1-81e8-f4a063c992d5
+
+	measure 'FLOW - Status' =
+			
+			
+			VAR X = MAXX(F_Update_DataFlow, F_Update_DataFlow[status])
+			RETURN
+			
+			SWITCH(
+			    TRUE(),
+			    X = "Sucess", "Finalizado",
+			    BLANK())
+		displayFolder: MONITORAMENTO
+		lineageTag: bfec15e8-7a6f-45b2-a5cf-3cc300bb2b18
+
+	measure 'FLOW - LAST TÉRMINO' =
+			
+			
+			CALCULATE(
+			    MAX(F_Update_DataFlow[Time_Finish]),
+			    F_Update_DataFlow[status2] = "Falha",
+			    ALLEXCEPT(F_Update_DataFlow, F_Update_DataFlow[dataflowName])
+			)
+		formatString: Short Time
+		displayFolder: MONITORAMENTO
+		lineageTag: 121753bf-abcb-4772-bf53-3d9f3573e8c7
+
+	measure 'DATASET - TÉRMINO' = ```
+			
+			
+			VAR TENTATIVA = [FLOW - Verificar Correção]
+			
+			VAR TIMESTART = 
+			
+			CALCULATE(
+			    MAX(F_Update_DataSet[Time_Start]),
+			    F_Update_DataSet[status2] = "Executando",
+			    ALLEXCEPT(Datasets, Datasets[datasetName])
+			)
+			VAR TIMEEND = 
+			
+			CALCULATE(
+			    MAX(F_Update_DataSet[Time_Finish]),
+			    F_Update_DataSet[status2] IN {"Falhou", "Finaklizado"},
+			    ALLEXCEPT(Datasets, Datasets[datasetName])
+			)
+			RETURN
+			
+			IF(TENTATIVA = "Executando",
+			TIMESTART, TIMEEND)
+			```
+		formatString: Short Time
+		displayFolder: MONITORAMENTO
+		lineageTag: fcd18a14-37f5-4984-9229-d377aa0fd788
+
+	measure 'DATASET - Quantidade de Tentativas' =
+			
+			COALESCE(
+			    COUNTROWS(
+			        FILTER(
+			            F_Update_DataSet,
+			            F_Update_DataSet[status2]= "Falha"
+			        )
+			    ),
+			    IF(
+			        COUNTROWS(
+			            FILTER(
+			                F_Update_DataSet,
+			                F_Update_DataSet[status2] = "Executando" <> BLANK()
+			                )
+			        ) <> BLANK(), 0,
+			        BLANK()
+			        )
+			    )
+		formatString: 0
+		displayFolder: MONITORAMENTO
+		lineageTag: 92a4fb75-77a4-4793-863f-6efea61c966d
+
+	measure 'FLOW - STATUS -' = ```
+			
+			
+			CALCULATE(
+			    MAX(F_Update_DataFlow[status2]),
+			    NOT F_Update_DataFlow[status2] IN {"Executando", "Finalizado"},
+			    F_Update_DataFlow[DATE_REF] = TODAY())
+			
+			```
+		lineageTag: 056efc8f-463c-4713-851e-c4908360f2b2
+
+	measure dfssd =
+			COALESCE(
+			    COUNTROWS(
+			            F_Update_DataFlow
+			    ),
+			    IF(
+			        COUNTROWS(
+			            FILTER(
+			                F_Update_DataFlow,
+			                F_Update_DataFlow[refreshType] = "Scheduled" &&
+			                F_Update_DataFlow[status2] <> "Executando"
+			                )
+			        ) <> BLANK(), 0,
+			        BLANK()
+			        )
+			    )
+		formatString: 0
+		lineageTag: dfc25df7-483e-4dc9-81c7-d9fa5998bf0b
+
+	measure 'DATASET - Status' =
+			
+			
+			CALCULATE(
+			    MAX(F_Update_DataSet[status3]),
+			    F_Update_DataSet[status3] = "Falha",
+			    ALL(WEB_D_CALENDARIO[Datas]),
+			    ALLEXCEPT(Datasets, Datasets[datasetId]))
+		displayFolder: MONITORAMENTO
+		lineageTag: e254089b-877c-49fb-80dc-6299a88fd9d5
+
+	measure 'DATASET - Falha' = ```
+			
+			CALCULATE(
+			    COALESCE(
+			        COUNTROWS(
+			            FILTER(
+			                F_Update_DataSet,
+			                F_Update_DataSet[status2]= "Falha"
+			            )
+			        ),
+			        IF(
+			            COUNTROWS(
+			                FILTER(
+			                    F_Update_DataSet,
+			                    F_Update_DataSet[status2] = "Executando" <> BLANK()
+			                    )
+			            ) <> BLANK(), "",
+			            BLANK()
+			            )
+			        ),
+			    ALLEXCEPT(Datasets, Datasets[datasetName])
+			)
+			
+			```
+		formatString: 0
+		displayFolder: MONITORAMENTO
+		lineageTag: b114831d-b0c8-455c-b4b9-3ce875a26703
+
+	measure 'FLOW - Falha' =
+			
+			
+			COALESCE(
+			    COUNTROWS(
+			        FILTER(
+			            F_Update_DataFlow,
+			            F_Update_DataFlow[status2] IN {"Falha", "Cancelado"}
+			        )
+			    ),
+			    IF(
+			        COUNTROWS(
+			            FILTER(
+			                F_Update_DataFlow,
+			                F_Update_DataFlow[status2] = "Executando" <> BLANK()
+			                )
+			        ) <> BLANK(), "",
+			        BLANK()
+			        )
+			    )
+		formatString: 0
+		displayFolder: MONITORAMENTO
+		lineageTag: 84be70b8-8b67-40d5-9439-3944734ad150
+
+	measure 'FLOW - TÉRMINO' = ```
+			
+			
+			VAR TETATIVA = [FLOW - Verificar Correção]
+			
+			VAR TIMESTART = 
+			
+			CALCULATE(
+			    MAX(F_Update_DataFlow[Time_Start]),
+			    F_Update_DataFlow[status2] = "Executando",
+			    ALLEXCEPT(F_Update_DataFlow, F_Update_DataFlow[dataflowName])
+			)
+			VAR TIMEEND = 
+			
+			CALCULATE(
+			    MAX(F_Update_DataFlow[Time_Finish]),
+			    F_Update_DataFlow[status2] IN {"Falha", "Finalizado"},
+			    ALLEXCEPT(F_Update_DataFlow, F_Update_DataFlow[dataflowName])
+			)
+			RETURN
+			
+			IF(TETATIVA = "Executando",
+			TIMESTART, TIMEEND)
+			```
+		formatString: hh:nn
+		displayFolder: MONITORAMENTO
+		lineageTag: cf3ec9b5-d376-4b45-92fd-ef78ffc03d90
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	partition Medidas = m
+		mode: import
+		source =
+				let
+				    Fonte = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [#"Coluna 1" = _t]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"Coluna 1", type text}}),
+				    #"Colunas Removidas" = Table.RemoveColumns(#"Tipo Alterado",{"Coluna 1"})
+				in
+				    #"Colunas Removidas"
+
+	annotation PBI_ResultType = Table
+

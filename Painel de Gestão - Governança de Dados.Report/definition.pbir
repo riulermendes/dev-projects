@@ -1,0 +1,9 @@
+{
+  "version": "4.0",
+  "datasetReference": {
+    "byPath": {
+      "path": "../Painel de Gestão - Governança de Dados.SemanticModel"
+    },
+    "byConnection": null
+  }
+}

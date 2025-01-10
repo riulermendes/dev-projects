@@ -1,0 +1,145 @@
+table BS_F_TAREFAS_PROGRAMADAS
+	lineageTag: 6f981013-66f9-4c2c-8c49-0cc764dec3cd
+
+	column ID_BACKGROUND
+		dataType: string
+		lineageTag: ed50465f-4700-4db1-abad-23478477d0ff
+		summarizeBy: none
+		sourceColumn: ID_BACKGROUND
+
+		annotation SummarizationSetBy = Automatic
+
+	column STATUS
+		dataType: string
+		lineageTag: 85f48e91-99ab-4279-9258-61e1e8256436
+		summarizeBy: none
+		sourceColumn: STATUS
+
+		annotation SummarizationSetBy = Automatic
+
+	column ID_FILA
+		dataType: string
+		lineageTag: 6ff8819a-d9c6-4933-801e-f0c694565de9
+		summarizeBy: none
+		sourceColumn: ID_FILA
+
+		annotation SummarizationSetBy = Automatic
+
+	column DESCRICAO
+		dataType: string
+		lineageTag: 1ecd9e69-f99b-44bb-bdb8-92ef120697bf
+		summarizeBy: none
+		sourceColumn: DESCRICAO
+
+		annotation SummarizationSetBy = Automatic
+
+	column ENVIADO
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: deb5b7c4-5537-475a-918a-c26aa3d91043
+		summarizeBy: none
+		sourceColumn: ENVIADO
+
+		variation Variation
+			isDefault
+			relationship: f50af5c7-0434-41ff-b944-b17c2d44a94a
+			defaultHierarchy: LocalDateTable_937f4af1-a084-4829-b5f3-18424fd99559.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column CRIADO
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 355429de-91da-44d9-8c6e-5719f81d9aa6
+		summarizeBy: none
+		sourceColumn: CRIADO
+
+		variation Variation
+			isDefault
+			relationship: 53325fb0-e6ad-49cc-a9a3-21b907d93122
+			defaultHierarchy: LocalDateTable_8a41e724-a3cf-411a-8d6a-4f82e130a7ee.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column INICIADO
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: fce9e0be-fac2-4afa-90c9-1e4489008af3
+		summarizeBy: none
+		sourceColumn: INICIADO
+
+		variation Variation
+			isDefault
+			relationship: 1385e34a-b5d6-47c2-99c8-0adeb91bda0f
+			defaultHierarchy: LocalDateTable_3f5d227a-c593-4d10-9b77-d7e527f90ae3.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column EXECUTADO
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: e1193a61-19a7-4b14-a445-771cc501bc70
+		summarizeBy: none
+		sourceColumn: EXECUTADO
+
+		variation Variation
+			isDefault
+			relationship: 5fcf270f-cbbc-45a6-a130-f19efa37fb70
+			defaultHierarchy: LocalDateTable_f7cca1f5-6ff4-436f-8981-77626b0a27d3.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column ID_PROGRAMACAO
+		dataType: string
+		lineageTag: 1f1fa7d9-aa4a-4ef2-845f-204d1a1b5e5f
+		summarizeBy: none
+		sourceColumn: ID_PROGRAMACAO
+
+		annotation SummarizationSetBy = Automatic
+
+	column DATA_REF
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 7f97848c-1a41-4229-a8d7-adf23e09d6b5
+		summarizeBy: none
+		sourceColumn: DATA_REF
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column DESC
+		dataType: string
+		lineageTag: 4d74f299-d64d-47fd-bc32-677641564c73
+		summarizeBy: none
+		sourceColumn: DESC
+
+		annotation SummarizationSetBy = Automatic
+
+	column STATUS2
+		dataType: string
+		lineageTag: 218b0f28-b7b4-4245-8601-a4f253afca83
+		summarizeBy: none
+		sourceColumn: STATUS2
+
+		annotation SummarizationSetBy = Automatic
+
+	partition BS_F_TAREFAS_PROGRAMADAS = m
+		mode: import
+		source =
+				let
+				    Fonte = PowerBI.Dataflows(null),
+				    #"8b1431d2-e713-4668-82ab-45de418f1585" = Fonte{[workspaceId="8b1431d2-e713-4668-82ab-45de418f1585"]}[Data],
+				    #"78880eac-d8d7-4157-96a2-a660bdf1dbc3" = #"8b1431d2-e713-4668-82ab-45de418f1585"{[dataflowId="78880eac-d8d7-4157-96a2-a660bdf1dbc3"]}[Data],
+				    BS_F_TAREFAS_PROGRAMADAS1 = #"78880eac-d8d7-4157-96a2-a660bdf1dbc3"{[entity="BS_F_TAREFAS_PROGRAMADAS"]}[Data],
+				    #"Texto Inserido Após o Delimitador" = Table.AddColumn(BS_F_TAREFAS_PROGRAMADAS1, "DESC", each Text.AfterDelimiter([DESCRICAO], " ", 1), type text),
+				    #"Extracted Text After Delimiter" = Table.TransformColumns(#"Texto Inserido Após o Delimitador", {{"DESC", each Text.AfterDelimiter(_, " "), type text}}),
+				    #"Data Inserida" = Table.AddColumn(#"Extracted Text After Delimiter", "DATA_REF", each DateTime.Date([ENVIADO]), type date),
+				    #"Filtered Rows" = Table.SelectRows(#"Data Inserida", each Text.Contains([DESCRICAO], "BS") or Text.Contains([DESCRICAO], "ERP")),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"ID_FILA", type text}, {"ID_BACKGROUND", type text}, {"ID_PROGRAMACAO", type text}}),
+				    #"Inserted Replaced Text" = Table.AddColumn(#"Changed Type", "STATUS2", each Text.Replace([STATUS], "Pront", "Finalizad"), type text)
+				in
+				    #"Inserted Replaced Text"
+
+	annotation PBI_ResultType = Table
+

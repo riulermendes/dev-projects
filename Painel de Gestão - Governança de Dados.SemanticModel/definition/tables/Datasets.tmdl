@@ -1,0 +1,114 @@
+table Datasets
+	lineageTag: 4a7f18a4-b3b5-4bb8-ac9a-6399ace03f9c
+
+	column WorkspaceId
+		dataType: string
+		lineageTag: 1b494f2d-6e46-405b-9831-facbadf550cf
+		summarizeBy: none
+		sourceColumn: WorkspaceId
+
+		annotation SummarizationSetBy = Automatic
+
+	column addRowsAPIEnabled
+		dataType: string
+		lineageTag: 0c0e1945-870d-4a96-a85a-17841aa3dbfa
+		summarizeBy: none
+		sourceColumn: addRowsAPIEnabled
+
+		annotation SummarizationSetBy = Automatic
+
+	column configuredBy
+		dataType: string
+		lineageTag: 7b17df64-ab67-4fd1-9f9c-44f9762f85fb
+		summarizeBy: none
+		sourceColumn: configuredBy
+
+		annotation SummarizationSetBy = Automatic
+
+	column isRefreshable
+		dataType: string
+		lineageTag: 04c69bd3-f1bd-44d9-9993-d43f3195e601
+		summarizeBy: none
+		sourceColumn: isRefreshable
+
+		annotation SummarizationSetBy = Automatic
+
+	column isEffectiveIdentityRequired
+		dataType: string
+		lineageTag: 4fef2be4-0511-497e-ac91-779fbc1845d8
+		summarizeBy: none
+		sourceColumn: isEffectiveIdentityRequired
+
+		annotation SummarizationSetBy = Automatic
+
+	column isEffectiveIdentityRolesRequired
+		dataType: string
+		lineageTag: 1d8e7ee0-47f2-43a0-b262-bdf97121937b
+		summarizeBy: none
+		sourceColumn: isEffectiveIdentityRolesRequired
+
+		annotation SummarizationSetBy = Automatic
+
+	column createdDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 81c513ab-78a5-4eed-8bf3-ab8f7785a3db
+		summarizeBy: none
+		sourceColumn: createdDate
+
+		variation Variation
+			isDefault
+			relationship: c32c290e-44f8-4063-8ea7-74715fba751a
+			defaultHierarchy: LocalDateTable_89d36a23-14c8-4bc8-b2d7-1d87e4bfb312.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column datasetId
+		dataType: string
+		lineageTag: d2028641-2f3f-4fe8-9f04-ce8b29746d4c
+		summarizeBy: none
+		sourceColumn: datasetId
+
+		annotation SummarizationSetBy = Automatic
+
+	column datasetName
+		dataType: string
+		lineageTag: 69fdb1fd-51d1-4c91-b1c2-cc9105d1d3cf
+		summarizeBy: none
+		sourceColumn: datasetName
+
+		annotation SummarizationSetBy = Automatic
+
+	column users
+		dataType: string
+		lineageTag: c82ff0bd-b8fb-4823-8593-03ad3c169da1
+		summarizeBy: none
+		sourceColumn: users
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Datasets-d640e7b5-76b3-44cb-b912-cca8dd7d9cae = m
+		mode: import
+		queryGroup: Dimensões
+		source = ```
+				let
+				    Fonte = Workspaces,
+				    #"Outras Colunas Removidas" = Table.SelectColumns(Fonte,{"WorkspaceId", "datasets", "users"}),
+				    #"datasets Expandido" = Table.ExpandRecordColumn(Table.ExpandListColumn(#"Outras Colunas Removidas", "datasets"), "datasets", 
+				    
+				    {"id", "name", "addRowsAPIEnabled", "configuredBy", "isRefreshable", "isEffectiveIdentityRequired", "isEffectiveIdentityRolesRequired", "createdDate"}, 
+				    
+				    {"datasetId", "datasetName", "addRowsAPIEnabled", "configuredBy", "isRefreshable", "isEffectiveIdentityRequired", "isEffectiveIdentityRolesRequired", "createdDate"}),
+				
+				    
+				    #"Linhas em Branco Removidas" = Table.SelectRows(#"datasets Expandido", each not List.IsEmpty(List.RemoveMatchingItems(Record.FieldValues(_), {"", null}))),
+				    #"Linhas Filtradas" = Table.SelectRows(#"Linhas em Branco Removidas", each ([configuredBy] = "informatica@informaticalafaete.onmicrosoft.com") and ([datasetName] <> null and [datasetName] <> "Usage Metrics Report")),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Linhas Filtradas",{{"WorkspaceId", type text}, {"datasetId", type text}, {"datasetName", type text}, {"addRowsAPIEnabled", type text}, {"configuredBy", type text}, {"createdDate", type datetime}})
+				in
+				    #"Tipo Alterado"
+				```
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

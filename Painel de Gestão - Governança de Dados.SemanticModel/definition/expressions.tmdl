@@ -1,0 +1,259 @@
+expression 'GET Access Token' =
+		() =>
+		let
+		    client_id = "50924881-5a55-4bad-a917-6694f3e23cc5",
+		    email = "informatica@informaticalafaete.onmicrosoft.com",
+		    senha = "{b'OF^$ose!#f)c.bw)9",
+		    body = "grant_type=password&scope=openid&resource=https://analysis.windows.net/powerbi/api&client_id=" & client_id & "&username=" & email & "&password=" & senha,
+		    Data = Json.Document(
+		        Web.Contents(
+		            "https://login.microsoftonline.com/common/oauth2/token/",
+		            [
+		                Headers = [#"Content-Type" = "application/x-www-form-urlencoded"],
+		                Content = Text.ToBinary(body)
+		            ]
+		        )
+		    ),
+		    Token = Data[access_token]
+		in
+		    Token
+	lineageTag: a04a2b15-1b24-4546-9cd5-1950d6e21d63
+	queryGroup: Funções
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Function
+
+expression 'GET Activity' = ```
+		(accessToken as text, optional startDate as text, optional endDate as text, optional continuationToken as text, optional loop as number, optional data as list) =>
+		let
+		    Source = Json.Document(Web.Contents("https://api.powerbi.com/v1.0/myorg/",
+		    [
+		        RelativePath=if loop = 0
+		            then "admin/activityevents?startDateTime=" & startDate & "&endDateTime=" & endDate
+		            else "admin/activityevents?continuationToken='" & continuationToken & "'", 
+		        Headers=[Authorization="Bearer " & accessToken]
+		    ]
+		    )),
+		    token = Source[continuationToken],
+		    currentData = Source[activityEventEntities],
+		    appendedData = List.Combine({data, currentData}),
+		    loopNum = loop + 1,
+		    output = 
+		    if token is null or loopNum > 100
+		        then appendedData
+		    else @#"GET Activity"(accessToken, "", "", token, loopNum, appendedData)
+		in
+		    output
+		```
+	lineageTag: 68ebd5eb-49d7-4bbd-821f-436435f5ebfa
+	queryGroup: Funções
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Function
+
+expression Workspaces =
+		let
+		    Fonte = Json.Document(Web.Contents("https://api.powerbi.com/v1.0/myorg/",
+		    [
+		        RelativePath = "admin/groups?$top=500&$expand=datasets,dataflows,reports,dashboards,users",
+		        Headers=[Authorization="Bearer " & #"GET Access Token"()]
+		        ])),
+		    #"Convertido para Tabela" = Table.FromRecords({Fonte}),
+		    value = #"Convertido para Tabela"{0}[value],
+		    #"Convertido para Tabela1" = Table.FromList(value, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+		    #"Column1 Expandido" = Table.ExpandRecordColumn(#"Convertido para Tabela1", "Column1", {"id", "isReadOnly", "isOnDedicatedCapacity", "capacityMigrationStatus", "type", "state", "hasWorkspaceLevelSettings ", "name", "datasets", "dataflows", "reports", "dashboards", "users"}, {"id", "isReadOnly", "isOnDedicatedCapacity", "capacityMigrationStatus", "type", "state", "hasWorkspaceLevelSettings ", "name", "datasets", "dataflows", "reports", "dashboards", "users"}),
+		    #"Colunas Renomeadas" = Table.RenameColumns(#"Column1 Expandido",{{"id", "WorkspaceId"}}),
+		    #"Linhas Filtradas" = Table.SelectRows(#"Colunas Renomeadas", each ([type] = "Workspace") and ([state] = "Active") and ([name] <> "COMERCIAL" and [name] <> "Sales and Marketing sample"))
+		in
+		    #"Linhas Filtradas"
+	lineageTag: fd16f204-953d-4e17-9bba-eaf243560085
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
+expression 'GET DataFlow' = ```
+		(dataflowId as text) =>
+		    
+		    let
+		            Fonte = Json.Document(Web.Contents("https://api.powerbi.com/v1.0/myorg/",
+		            [
+		                RelativePath = "groups/8b1431d2-e713-4668-82ab-45de418f1585/dataflows/" & dataflowId & "/transactions", 
+		                Headers=[Authorization="Bearer " & #"GET Access Token"()]
+		            ])),
+		            #"Convertido para Tabela" = Table.FromRecords({Fonte}),
+		            #"Expanded value" = Table.ExpandListColumn(#"Convertido para Tabela", "value"),
+		            #"Expanded value1" = Table.ExpandRecordColumn(#"Expanded value", "value", {"requestId", "id", "refreshType", "startTime", "endTime", "status"}, {"requestId", "id", "refreshType", "startTime", "endTime", "status"})
+		    in
+		        #"Expanded value1"
+		```
+	lineageTag: a941fa0b-d0df-449b-9a18-a14b34ee2575
+	queryGroup: Funções
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Function
+
+expression 'GET DataSet' =
+		(datasetId as text) =>
+		    let
+		        Fonte = Json.Document(Web.Contents("https://api.powerbi.com/v1.0/myorg/",
+		        [
+		            RelativePath = "datasets/" & datasetId & "/refreshes/",
+		            Headers=[Authorization="Bearer " & #"GET Access Token"()]
+		        ])),
+		        #"Convertido para Tabela" = Table.FromRecords({Fonte}),
+		        #"Expanded value" = Table.ExpandListColumn(#"Convertido para Tabela", "value"),
+		        #"Expanded value1" = Table.ExpandRecordColumn(#"Expanded value", "value", {"requestId", "id", "refreshType", "startTime", "endTime", "status"/* , "refreshAttempts" */}, {"requestId", "id", "refreshType", "startTime", "endTime", "status"/* , "refreshAttempts" */})
+		    in
+		        #"Expanded value1"
+	lineageTag: 740c4874-ee87-4029-a6e4-1521872dc6be
+	queryGroup: Funções
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Function
+
+expression F_Update_DataFlow_old =
+		let
+		    Fonte = Json.Document(Web.Contents("https://api.powerbi.com/v1.0/myorg/",
+		    [
+		        RelativePath = "admin/groups?$top=500&$expand=dataflows",
+		        Headers=[Authorization="Bearer " & #"GET Access Token"()]
+		        ])),
+		    #"Convertido para Tabela" = Table.FromRecords({Fonte}),
+		    #"value Expandido" = Table.ExpandRecordColumn(Table.ExpandListColumn(#"Convertido para Tabela", "value"), "value", {"id", "dataflows"}, {"groupId", "dataflows"}),
+		    #"Outras Colunas Removidas" = Table.SelectColumns(#"value Expandido",{"groupId", "dataflows"}),
+		    #"datasets Expandido" = Table.ExpandRecordColumn(Table.ExpandListColumn(#"Outras Colunas Removidas", "dataflows"), "dataflows", {"objectId", "name"}, {"dataflowId", "dataflowName"}),
+		    #"Linhas Filtradas1" = Table.SelectRows(#"datasets Expandido", each ([dataflowId] <> null)),
+		
+		    ProcessarDataset = (dataflowId as text) =>
+		    let
+		            Fonte = Json.Document(Web.Contents("https://api.powerbi.com/v1.0/myorg/groups/8b1431d2-e713-4668-82ab-45de418f1585/dataflows/" & dataflowId & "/transactions",
+		            [
+		                Headers=[Authorization="Bearer " & #"GET Access Token"()]
+		            ])),
+		            #"Convertido para Tabela" = Table.FromRecords({Fonte}),
+		            #"Expanded value" = Table.ExpandListColumn(#"Convertido para Tabela", "value"),
+		            #"Expanded value1" = Table.ExpandRecordColumn(#"Expanded value", "value", {"requestId", "id", "refreshType", "startTime", "endTime", "status"}, {"requestId", "id", "refreshType", "startTime", "endTime", "status"})
+		    in
+		        #"Expanded value1",
+		
+		    // Aplicar a função personalizada a cada dataset na lista
+		    Resultados = Table.AddColumn(#"Linhas Filtradas1", "DadosProcessados", each ProcessarDataset([dataflowId])),
+		    #"DadosProcessados Expandido" = Table.ExpandTableColumn(Resultados, "DadosProcessados", {"id", "refreshType", "startTime", "endTime", "status"}, {"id", "refreshType", "startTime", "endTime", "status"}),
+		    #"Tipo Alterado" = Table.TransformColumnTypes(#"DadosProcessados Expandido",{{"startTime", type datetime}, {"endTime", type datetime}, {"refreshType", type text}, {"status", type text}, {"id", type text}, {"dataflowName", type text}, {"dataflowId", type text}, {"groupId", type text}}),
+		    #"Inserted Date" = Table.AddColumn(#"Tipo Alterado", "DATE_REF", each Date.From([startTime]), type date)
+		in
+		    #"Inserted Date"
+	lineageTag: 01d917eb-e427-4340-8c44-5d895e260dd3
+	queryGroup: Old
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Exception
+
+expression F_Update_DataSet_old =
+		let
+		    Fonte = Json.Document(Web.Contents("https://api.powerbi.com/v1.0/myorg/",
+		    [
+		        RelativePath = "admin/groups?$top=500&$expand=datasets",
+		        Headers=[Authorization="Bearer " & #"GET Access Token"()]
+		        ])),
+		    #"Convertido para Tabela" = Table.FromRecords({Fonte}),
+		    #"value Expandido" = Table.ExpandRecordColumn(Table.ExpandListColumn(#"Convertido para Tabela", "value"), "value", {"id", "datasets"}, {"groupId", "datasets"}),
+		    #"Outras Colunas Removidas" = Table.SelectColumns(#"value Expandido",{"groupId", "datasets"}),
+		    #"datasets Expandido" = Table.ExpandRecordColumn(Table.ExpandListColumn(#"Outras Colunas Removidas", "datasets"), "datasets", {"id", "name"}, {"datasetId", "datasetName"}),
+		    #"Linhas Filtradas1" = Table.SelectRows(#"datasets Expandido", each ([datasetId] <> null)),
+		    // Função personalizada para processar cada dataset
+		    ProcessarDataset = (datasetId as text) =>
+		    let
+		        Fonte = Json.Document(Web.Contents("https://api.powerbi.com/v1.0/myorg/datasets/" & datasetId & "/refreshes/",
+		        [
+		            Headers=[Authorization="Bearer " & #"GET Access Token"()]
+		        ])),
+		        #"Convertido para Tabela" = Table.FromRecords({Fonte}),
+		        #"Expanded value" = Table.ExpandListColumn(#"Convertido para Tabela", "value"),
+		        #"Expanded value1" = Table.ExpandRecordColumn(#"Expanded value", "value", {"requestId", "id", "refreshType", "startTime", "endTime", "status"/* , "refreshAttempts" */}, {"requestId", "id", "refreshType", "startTime", "endTime", "status"/* , "refreshAttempts" */})
+		    in
+		        #"Expanded value1",
+		
+		    // Aplicar a função personalizada a cada dataset na lista
+		    Resultados = Table.AddColumn(#"Linhas Filtradas1", "DadosProcessados", each ProcessarDataset([datasetId])),
+		    #"Erros Removidos" = Table.RemoveRowsWithErrors(Resultados, {"DadosProcessados"}),
+		    #"DadosProcessados Expandido" = Table.ExpandTableColumn(#"Erros Removidos", "DadosProcessados", {"requestId", "id", "refreshType", "startTime", "endTime", "status"/* , "refreshAttempts" */}, {"requestId", "id", "refreshType", "startTime", "endTime", "status"/* , "refreshAttempts" */}),
+		    #"Linhas Filtradas" = Table.SelectRows(#"DadosProcessados Expandido", each ([requestId] <> null)),
+		    #"Tipo Alterado" = Table.TransformColumnTypes(#"Linhas Filtradas",{{"startTime", type datetime}, {"endTime", type datetime}, {"groupId", type text}, {"datasetId", type text}, {"datasetName", type text}, {"requestId", type text}, {"refreshType", type text}, {"status", type text}}),
+		    #"Inserted Date" = Table.AddColumn(#"Tipo Alterado", "DATE_REF", each Date.From([startTime]), type date)
+		in
+		    #"Inserted Date"
+	lineageTag: 7e0da83a-ec43-4da2-ae8b-48e852066123
+	queryGroup: Old
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
+expression 'GET Access by dataset' =
+		(datasetId as text) =>
+		    let
+		        Fonte = Json.Document(Web.Contents("https://api.powerbi.com/v1.0/myorg/",
+		        [
+		            RelativePath = "datasets/" & datasetId & "/users",
+		            Headers=[Authorization="Bearer " & #"GET Access Token"()]
+		        ])),
+		        #"Convertido para Tabela" = Table.FromRecords({Fonte}),
+		        #"Expanded value" = Table.ExpandRecordColumn(Table.ExpandListColumn(#"Convertido para Tabela", "value"), "value", {"datasetUserAccessRight", "identifier", "principalType"}, {"datasetUserAccessRight", "identifier", "principalType"})
+		    in
+		        #"Expanded value"
+	lineageTag: 6ddd7678-6cdb-42cc-bcb5-b9b1a865a957
+	queryGroup: Funções
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Function
+
+expression ERP_D_INDICE =
+		let
+		    Fonte = PowerBI.Dataflows(null),
+		    #"Data Expandido" = Table.ExpandTableColumn(Fonte, "Data", {"dataflowId", "dataflowName", "dataflowDescription", "Tags", "Data", "ItemKind", "ItemName", "IsLeaf"}, {"Data.dataflowId", "Data.dataflowName", "Data.dataflowDescription", "Data.Tags", "Data.Data", "Data.ItemKind", "Data.ItemName", "Data.IsLeaf"}),
+		    #"Data.Data Expandido" = Table.ExpandTableColumn(#"Data Expandido", "Data.Data", {"entity", "dataCategory", "Data", "Tags", "ItemKind", "ItemName", "IsLeaf"}, {"Data.Data.entity", "Data.Data.dataCategory", "Data.Data.Data", "Data.Data.Tags", "Data.Data.ItemKind", "Data.Data.ItemName", "Data.Data.IsLeaf"}),
+		    #"Personalização Adicionada" = Table.AddColumn(#"Data.Data Expandido", "Colunas", each Table.ColumnNames([Data.Data.Data])),
+		    #"Colunas Expandido" = Table.ExpandListColumn(#"Personalização Adicionada", "Colunas"),
+		    #"Colunas Renomeadas" = Table.RenameColumns(#"Colunas Expandido",{{"Data.dataflowName", "Flow"}, {"Data.Data.entity", "Tabelas"}})
+		in
+		    #"Colunas Renomeadas"
+	lineageTag: cabfcd33-b23a-40e6-8b21-284387a42520
+	queryGroup: Old
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression 'Get Workspaces' =
+		(WorkspaceId as text)=>
+		let
+		    Fonte = Json.Document(Web.Contents("https://api.powerbi.com/v1.0/myorg/",
+		    [
+		        RelativePath = "admin/groups?$top=500&$expand=datasets",
+		        Headers=[Authorization="Bearer " & #"GET Access Token"()]
+		        ])),
+		    #"Convertido para Tabela" = Table.FromRecords({Fonte}),
+		    value = #"Convertido para Tabela"{0}[value],
+		    #"Convertido para Tabela1" = Table.FromList(value, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+		    #"Expanded Column1" = Table.ExpandRecordColumn(#"Convertido para Tabela1", "Column1", {"id", "datasets"}, {"WorkspaceId", "datasetId"}),
+		    #"Filtered Rows" = Table.SelectRows(#"Expanded Column1", each true),
+		    #"Changed Type" = Table.TransformColumnTypes(#"Filtered Rows",{{"WorkspaceId", type text}}),
+		    #"Expanded Column1.datasets" = Table.ExpandListColumn(#"Changed Type", "datasetId"),
+		    #"Filtered Rows1" = Table.SelectRows(#"Expanded Column1.datasets", each ([WorkspaceId] = WorkspaceId))
+		in
+		    #"Filtered Rows1"
+	lineageTag: aaab60f2-8b5b-41a8-80be-f8962a009a66
+	queryGroup: Funções
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Function
+

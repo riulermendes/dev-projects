@@ -1,0 +1,52 @@
+table Dataflows
+	lineageTag: ad9b8546-9a7b-4a88-9f91-963baee513ff
+
+	column WorkspaceId
+		dataType: string
+		lineageTag: e433ac98-d5b5-4c70-90a7-d46c93f29b17
+		summarizeBy: none
+		sourceColumn: WorkspaceId
+
+		annotation SummarizationSetBy = Automatic
+
+	column configuredBy
+		dataType: string
+		lineageTag: d8b7c722-d9c8-44bb-8bce-497af8a72110
+		summarizeBy: none
+		sourceColumn: configuredBy
+
+		annotation SummarizationSetBy = Automatic
+
+	column dataflowId
+		dataType: string
+		lineageTag: b0e89617-329d-47e6-ac2f-354f758ec07b
+		summarizeBy: none
+		sourceColumn: dataflowId
+
+		annotation SummarizationSetBy = Automatic
+
+	column dataflowName
+		dataType: string
+		lineageTag: 1eee109b-2eac-4068-aa51-94a06f630c67
+		summarizeBy: none
+		sourceColumn: dataflowName
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Dataflows-54f76608-23d7-47b3-9c9d-36772796b5fd = m
+		mode: import
+		queryGroup: Dimensões
+		source =
+				let
+				    Fonte = Workspaces,
+				    #"Outras Colunas Removidas" = Table.SelectColumns(Fonte,{"WorkspaceId", "dataflows"}),
+				    #"dataflows Expandido" = Table.ExpandRecordColumn(Table.ExpandListColumn(#"Outras Colunas Removidas", "dataflows"), "dataflows", {"objectId", "name", "configuredBy"}, {"dataflowId", "dataflowName", "configuredBy"}),
+				    #"Linhas Filtradas" = Table.SelectRows(#"dataflows Expandido", each ([dataflowId] <> null)),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Linhas Filtradas",{{"WorkspaceId", type text}, {"dataflowId", type text}, {"dataflowName", type text}, {"configuredBy", type text}})
+				in
+				    #"Tipo Alterado"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

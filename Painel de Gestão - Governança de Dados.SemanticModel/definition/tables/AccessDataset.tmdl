@@ -1,0 +1,96 @@
+table AccessDataset
+	lineageTag: 620eb67c-47b0-4192-825f-6c58d48e03af
+
+	column type
+		dataType: string
+		lineageTag: c7704a07-e0ca-456d-9d34-f00351aa536b
+		summarizeBy: none
+		sourceColumn: type
+
+		annotation SummarizationSetBy = Automatic
+
+	column datasetId
+		dataType: string
+		lineageTag: 8e2aa5dc-7a67-45f1-a065-b932a864915b
+		summarizeBy: none
+		sourceColumn: datasetId
+
+		annotation SummarizationSetBy = Automatic
+
+	column datasetName
+		dataType: string
+		lineageTag: 2ba95ae3-22c3-417f-8d64-6ff523a726c2
+		summarizeBy: none
+		sourceColumn: datasetName
+
+		annotation SummarizationSetBy = Automatic
+
+	column datasetUserAccessRight
+		dataType: string
+		lineageTag: 1ff42b17-bd08-4f33-87a5-3e448c43a86e
+		summarizeBy: none
+		sourceColumn: datasetUserAccessRight
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkspaceId
+		dataType: string
+		lineageTag: 52313782-7f24-4c35-b836-396eff99315b
+		summarizeBy: none
+		sourceColumn: WorkspaceId
+
+		annotation SummarizationSetBy = Automatic
+
+	column UserId
+		dataType: string
+		lineageTag: 7eb22e67-31a3-4af4-8c70-0bcb97a328a6
+		summarizeBy: none
+		sourceColumn: UserId
+
+		annotation SummarizationSetBy = Automatic
+
+	column key_datasetId_userId
+		dataType: string
+		lineageTag: 56dbbbc2-a06f-4453-a29d-458c2c5de445
+		summarizeBy: none
+		sourceColumn: key_datasetId_userId
+
+		annotation SummarizationSetBy = Automatic
+
+	partition AccessDataset = m
+		mode: import
+		queryGroup: Dimensões
+		source = ```
+				let
+				    Source = Json.Document(Web.Contents("
+				https://api.powerbi.com/v1.0/myorg/"
+				,
+				    [
+				        RelativePath = "admin/groups?$top=500&$expand=datasets, reports",
+				        Headers = [Authorization = "Bearer " & #"GET Access Token"()]
+				    ])),
+				    #"Converted to Table" = Table.FromRecords({Source}),
+				    value = #"Converted to Table"{0}[value],
+				    #"Converted to Table1" = Table.FromList(value, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+				    #"Expanded Column1" = Table.ExpandRecordColumn(#"Converted to Table1", "Column1", {"id", "isReadOnly", "isOnDedicatedCapacity", "capacityMigrationStatus", "type", "state", "hasWorkspaceLevelSettings ", "name", "datasets", "dataflows", "reports", "dashboards", "users"}, 
+				
+				{"WorkspaceId", "isReadOnly", "isOnDedicatedCapacity", "capacityMigrationStatus", "type", "state", "hasWorkspaceLevelSettings ", "name", "datasets", "dataflows", "reports", "dashboards", "users"}),
+				    #"Removed Other Columns" = Table.SelectColumns(#"Expanded Column1",{"WorkspaceId", "type", "datasets"}),
+				    #"Expanded datasets" = Table.ExpandRecordColumn(Table.ExpandListColumn(#"Removed Other Columns", "datasets"), "datasets", {"id", "name"}, {"datasetId", "datasetName"}),
+				    #"Filtered Rows" = Table.SelectRows(#"Expanded datasets", each ([type] = "Workspace")),
+				    #"Removed Blank Rows" = Table.SelectRows(#"Filtered Rows", each not List.IsEmpty(List.RemoveMatchingItems(Record.FieldValues(_), {"", null}))),
+				    #"Filtered Rows1" = Table.SelectRows(#"Removed Blank Rows", each ([datasetName] <> null)),
+				    #"Invoked Custom Function" = Table.AddColumn(#"Filtered Rows1", "GET Access by dataset", each #"GET Access by dataset"([datasetId])),
+				    #"Removed Errors" = Table.RemoveRowsWithErrors(#"Invoked Custom Function", {"GET Access by dataset"}),
+				    #"Expanded GET Access by dataset1" = Table.ExpandTableColumn(#"Removed Errors", "GET Access by dataset", {"datasetUserAccessRight", "identifier"}, {"datasetUserAccessRight", "UserId"}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Expanded GET Access by dataset1", {{"WorkspaceId", type text}, {"type", type text}, {"datasetId", type text}, {"datasetName", type text}, {"datasetUserAccessRight", type text}, {"UserId", type text}}),
+				    #"Added Custom" = Table.AddColumn(#"Changed Type", "key_datasetId_userId", each [datasetId] & "-" & [UserId], type text),
+				    #"Filtered Rows2" = Table.SelectRows(#"Added Custom", each ([datasetName] <> "Usage Metrics Report"))
+				in
+				    #"Filtered Rows2"
+				```
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

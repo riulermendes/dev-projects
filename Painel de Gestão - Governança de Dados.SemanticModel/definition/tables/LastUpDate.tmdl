@@ -1,0 +1,71 @@
+table LastUpDate
+	lineageTag: c7433525-8bbe-4df3-9961-5e11d80aa97f
+
+	column Date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: e9a092d2-2b02-435d-9edd-7bdd892d0621
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: 4b2f12b5-c27b-4823-8afc-52e9cdc713e7
+			defaultHierarchy: LocalDateTable_3a7c981d-e771-4e0e-9be9-3fd9de206420.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Time
+		dataType: dateTime
+		formatString: Short Time
+		lineageTag: 5919973b-8ab8-450d-9df2-93a711d24cfc
+		summarizeBy: none
+		sourceColumn: Time
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Time
+
+	column Data_Ajustada = LastUpDate[LastUpDate]-(3/24)
+		formatString: General Date
+		lineageTag: faca7abb-7744-4eb8-b1ab-b261667ca9b5
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: d4667536-610e-4838-8067-50964db80708
+			defaultHierarchy: LocalDateTable_31a72a35-adf4-4bbd-b105-0a002d861257.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column LastUpDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: bb6280bb-598e-4ee6-b472-9fb56a56e9af
+		summarizeBy: none
+		sourceColumn: LastUpDate
+
+		variation Variation
+			isDefault
+			relationship: fa3beecc-454a-40f8-8546-a450e675fb8d
+			defaultHierarchy: LocalDateTable_0cb367c4-d981-46fd-a33d-a62d3165a670.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+	partition LastUpDate = m
+		mode: import
+		source =
+				let
+				    Source = DateTimeZone.SwitchZone(DateTimeZone.LocalNow(),-3),
+				    #"Converted to Table" = #table(1, {{Source}}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Converted to Table",{{"Column1", type datetimezone}}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Changed Type",{{"Column1", "LastUpDate"}}),
+				    #"Inserted Date" = Table.AddColumn(#"Renamed Columns", "Date", each DateTime.Date([LastUpDate]), type date),
+				    #"Inserted Time" = Table.AddColumn(#"Inserted Date", "Time", each DateTime.Time([LastUpDate]), type time)
+				in
+				    #"Inserted Time"
+
+	annotation PBI_ResultType = Table
+

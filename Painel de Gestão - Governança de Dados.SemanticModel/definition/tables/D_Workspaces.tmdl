@@ -1,0 +1,85 @@
+table D_Workspaces
+	lineageTag: 1fe56fb8-9c74-4e03-b80b-515b8b8a2a12
+
+	column type
+		dataType: string
+		lineageTag: 7b40d526-7598-4520-b842-1269169c1b60
+		summarizeBy: none
+		sourceColumn: type
+
+		annotation SummarizationSetBy = Automatic
+
+	column state
+		dataType: string
+		lineageTag: 4fdc3163-4ce2-4b0e-9a98-6470aa43dbbf
+		summarizeBy: none
+		sourceColumn: state
+
+		annotation SummarizationSetBy = Automatic
+
+	column name
+		dataType: string
+		lineageTag: 826833e2-adfe-465d-93a5-31ddc252617a
+		summarizeBy: none
+		sourceColumn: name
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkspaceId
+		dataType: string
+		lineageTag: 6d27006b-35a0-4bc0-a5c3-48590389864e
+		summarizeBy: none
+		sourceColumn: WorkspaceId
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tipo_Workspaces = ```
+			
+			 
+			 ///  Está ocorrendo a separação dos ambientes de produção e produção
+			 SWITCH( 
+			    TRUE(), 
+			    LEFT(D_Workspaces[name],1 ) IN {"2","3","4","5","6","7", "8","9","10"} , "Workspaces de Teste de Validação",
+			    LEFT(D_Workspaces[name],1 ) = "1", "Workspace - Data Flow",
+			    "Workspaces em Produção"
+			    )
+			```
+		lineageTag: 6a2e5b10-a806-46ab-a496-2d514a8f77bd
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition D_Workspaces = m
+		mode: import
+		queryGroup: Dimensões
+		source = ```
+				let
+				    Fonte = Json.Document(Web.Contents("https://api.powerbi.com/v1.0/myorg/",
+				    [
+				        RelativePath = "admin/groups?$top=500&$expand=datasets,dataflows,reports,dashboards,users",
+				        Headers=[Authorization="Bearer " & #"GET Access Token"()]
+				        ])),
+				    #"Convertido para Tabela" = Table.FromRecords({Fonte}),
+				    value = #"Convertido para Tabela"{0}[value],
+				    #"Convertido para Tabela1" = Table.FromList(value, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+				    #"Column1 Expandido" = Table.ExpandRecordColumn(#"Convertido para Tabela1", "Column1", {"id", "isReadOnly", "isOnDedicatedCapacity", "capacityMigrationStatus", "type", "state", "hasWorkspaceLevelSettings ", "name", "datasets", "dataflows", "reports", "dashboards", "users"}, 
+				    
+				        {"groupId", "isReadOnly", "isOnDedicatedCapacity", "capacityMigrationStatus", "type", "state", "hasWorkspaceLevelSettings ", "name", "datasets", "dataflows", "reports", "dashboards", "users"}),
+				    #"Expanded datasets" = Table.ExpandRecordColumn(Table.ExpandListColumn(#"Column1 Expandido", "datasets"), "datasets", {"id", "name"}, {"datasets.id", "datasets.name"}),
+				    #"Filtered Rows" = Table.SelectRows(#"Expanded datasets", each [datasets.id] <> null and [datasets.id] <> ""),
+				    #"Expanded users" = Table.ExpandListColumn(#"Filtered Rows", "users"),
+				    #"Expanded users1" = Table.ExpandRecordColumn(#"Expanded users", "users", {"groupUserAccessRight", "identifier"}, {"groupUserAccessRight", "identifier"}),
+				    #"Filtered Rows1" = Table.SelectRows(#"Expanded users1", each ([groupUserAccessRight] = "Admin") and ([identifier] = "informatica@informaticalafaete.onmicrosoft.com")),
+				    #"Removed Duplicates" = Table.Distinct(#"Filtered Rows1", {"groupId"}),
+				    #"Outras Colunas Removidas" = Table.SelectColumns(#"Removed Duplicates",{"groupId", "type", "state", "name"}),
+				    #"Renamed Columns" = Table.RenameColumns(#"Outras Colunas Removidas",{{"groupId", "WorkspaceId"}}),
+				    #"Linhas Filtradas" = Table.SelectRows(#"Renamed Columns", each ([type] = "Workspace")),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Linhas Filtradas",{{"WorkspaceId", type text}, {"type", type text}, {"state", type text}, {"name", type text}})
+				in
+				    #"Tipo Alterado"
+				```
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

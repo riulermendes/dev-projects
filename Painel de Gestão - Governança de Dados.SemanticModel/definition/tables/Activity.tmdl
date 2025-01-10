@@ -1,0 +1,305 @@
+table Activity
+	lineageTag: 73a014f7-b10e-4ef4-9aea-90109c150e80
+
+	column Date
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 50661481-c570-4d39-9f8a-1b1e7d892356
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: c1ed7cc3-451b-4fb6-857e-f1fc3184d5f5
+			defaultHierarchy: LocalDateTable_28a49221-bc6a-4b7d-a107-524b87363f85.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column StartDate
+		dataType: string
+		lineageTag: 390d2138-756b-4b9b-a94c-18120559e895
+		summarizeBy: none
+		sourceColumn: StartDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column EndDate
+		dataType: string
+		lineageTag: be98314e-7a2c-40e0-badb-b802992427a6
+		summarizeBy: none
+		sourceColumn: EndDate
+
+		annotation SummarizationSetBy = Automatic
+
+	column Id
+		dataType: string
+		lineageTag: 14fea6d5-e984-4b02-9431-1d9509a3a865
+		summarizeBy: none
+		sourceColumn: Id
+
+		annotation SummarizationSetBy = Automatic
+
+	column CreationTime
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: c93a32e1-5ab9-4727-b2be-93cbac5770e5
+		summarizeBy: none
+		sourceColumn: CreationTime
+
+		variation Variation
+			isDefault
+			relationship: 0cacaa43-1237-43d2-9ed7-cba17a49021d
+			defaultHierarchy: LocalDateTable_5e908abc-e1f0-48fb-8f79-388972360ab1.'Hierarquia de datas'
+
+		changedProperty = FormatString
+
+		annotation SummarizationSetBy = Automatic
+
+	column Operation
+		dataType: string
+		lineageTag: 743e2d79-21ea-407b-9022-9a4913aa879d
+		summarizeBy: none
+		sourceColumn: Operation
+
+		annotation SummarizationSetBy = Automatic
+
+	column UserKey
+		dataType: string
+		lineageTag: db16f427-98fe-4e6a-a9c1-d02b95827063
+		summarizeBy: none
+		sourceColumn: UserKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column UserId
+		dataType: string
+		lineageTag: b4127a72-da24-483d-8687-1163474d61c3
+		summarizeBy: none
+		sourceColumn: UserId
+
+		annotation SummarizationSetBy = Automatic
+
+	column ClientIP
+		dataType: string
+		lineageTag: d09436d3-2fa3-48c8-928c-1f63fa508504
+		summarizeBy: none
+		sourceColumn: ClientIP
+
+		annotation SummarizationSetBy = Automatic
+
+	column UserAgent
+		dataType: string
+		lineageTag: a699f5cd-bba8-4380-b4f7-8c9f85055cb4
+		summarizeBy: none
+		sourceColumn: UserAgent
+
+		annotation SummarizationSetBy = Automatic
+
+	column Activity
+		dataType: string
+		lineageTag: 3521849a-0d8e-4bb5-a82e-636637bbd8c7
+		summarizeBy: none
+		sourceColumn: Activity
+
+		annotation SummarizationSetBy = Automatic
+
+	column ItemName
+		dataType: string
+		lineageTag: 9476b2ae-205e-434b-88c1-297f9c5943d2
+		summarizeBy: none
+		sourceColumn: ItemName
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkSpaceName
+		dataType: string
+		lineageTag: 22002cf1-f740-4b26-b654-204c73531948
+		summarizeBy: none
+		sourceColumn: WorkSpaceName
+
+		annotation SummarizationSetBy = Automatic
+
+	column DatasetName
+		dataType: string
+		lineageTag: c50ad655-d573-42b6-b37c-a53e4eba9571
+		summarizeBy: none
+		sourceColumn: DatasetName
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReportName
+		dataType: string
+		lineageTag: eb88ae20-d33a-4825-972e-9aba0d6f6c7f
+		summarizeBy: none
+		sourceColumn: ReportName
+
+		annotation SummarizationSetBy = Automatic
+
+	column WorkspaceId
+		dataType: string
+		lineageTag: 93483bb9-f04d-4699-8b72-6cd57b29bf50
+		summarizeBy: none
+		sourceColumn: WorkspaceId
+
+		annotation SummarizationSetBy = Automatic
+
+	column ObjectId
+		dataType: string
+		lineageTag: c323f97f-5146-4f74-8e35-e16498069efe
+		summarizeBy: none
+		sourceColumn: ObjectId
+
+		annotation SummarizationSetBy = Automatic
+
+	column DatasetId
+		dataType: string
+		lineageTag: 0234a800-048f-4e1f-9254-71f8b165e9fc
+		summarizeBy: none
+		sourceColumn: DatasetId
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReportId
+		dataType: string
+		lineageTag: 8e4d2368-38d8-4974-9c94-c52544645ada
+		summarizeBy: none
+		sourceColumn: ReportId
+
+		annotation SummarizationSetBy = Automatic
+
+	column ReportType
+		dataType: string
+		lineageTag: ee5616f8-c0ae-426d-a0e5-2ddd523412ba
+		summarizeBy: none
+		sourceColumn: ReportType
+
+		annotation SummarizationSetBy = Automatic
+
+	column RequestId
+		dataType: string
+		lineageTag: 0c3226af-2055-4afd-a4e4-7ef543b756a7
+		summarizeBy: none
+		sourceColumn: RequestId
+
+		annotation SummarizationSetBy = Automatic
+
+	column ActivityId
+		dataType: string
+		lineageTag: 8310cc9d-46d7-4c5b-b74d-7ec0494eeb4c
+		summarizeBy: none
+		sourceColumn: ActivityId
+
+		annotation SummarizationSetBy = Automatic
+
+	column Data_Ajustada = Activity[CreationTime]-(3/24)
+		formatString: General Date
+		lineageTag: cdfb7ea3-d6fa-4a4a-b940-7e2443614a95
+		summarizeBy: none
+
+		variation Variation
+			isDefault
+			relationship: ba35d9a7-955e-46f3-9740-e733d7292477
+			defaultHierarchy: LocalDateTable_45411140-cfa6-4f4a-8a66-8852a4619a38.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Tipo_Workspaces = ```
+			
+			 
+			 ///  Está ocorrendo a separação dos ambientes de produção e produção
+			 SWITCH( 
+			    TRUE(), 
+			    LEFT(Activity[WorkSpaceName],1 ) IN {"1","2","3","4","5","6","7", "8","9","10"} , "Workspace Teste de Validação",
+			    "Workspace em Produção"
+			    )
+			```
+		lineageTag: 81907483-b0a1-4c66-9dcb-9b6653272fde
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column Data_Ref
+		dataType: dateTime
+		formatString: dd/mm/yyyy
+		lineageTag: 4b7f1dce-c1e2-4cf4-b928-a34661fdb3dd
+		summarizeBy: none
+		sourceColumn: Data_Ref
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column key_datasetId_userId
+		dataType: string
+		lineageTag: 590a4c5d-6cdb-4e1b-b77a-bc1dd0a46d2e
+		summarizeBy: none
+		sourceColumn: key_datasetId_userId
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Data.datasetId.id'
+		dataType: string
+		lineageTag: 23edcc15-f202-4ae1-a8df-0ae1340de9e9
+		summarizeBy: none
+		sourceColumn: Data.datasetId.id
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Data.datasetId.configuredBy'
+		dataType: string
+		lineageTag: 2ff185df-9eef-41ed-acf8-56899a0020b5
+		summarizeBy: none
+		sourceColumn: Data.datasetId.configuredBy
+
+		annotation SummarizationSetBy = Automatic
+
+	column IsSuccess
+		dataType: string
+		lineageTag: d9385df1-32be-4501-8461-629d514d523d
+		summarizeBy: none
+		sourceColumn: IsSuccess
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Activity-ee3d2347-c48f-4df2-87b8-06de9c0fc938 = m
+		mode: import
+		source =
+				let
+				    Source = List.Dates,
+				#"Invoked FunctionSource" = Source(Date.AddDays(DateTime.Date(DateTimeZone.LocalNow()), -30), 31, #duration(1, 0, 0, 0)),
+				#"Converted to Table" = Table.FromList(#"Invoked FunctionSource", Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+				#"Renamed Columns" = Table.RenameColumns(#"Converted to Table",{{"Column1", "Date"}}),
+				#"Added Custom" = Table.AddColumn(#"Renamed Columns", "StartDate", each "'"
+				& Date.ToText([Date], "YYYY-MM-DD")
+				& "T00:00:00.000Z"
+				& "'"),
+				#"Added Custom1" = Table.AddColumn(#"Added Custom", "EndDate", each "'"
+				& Date.ToText([Date], "YYYY-MM-DD")
+				& "T23:59:59.999Z"
+				& "'"),
+				#"Invoked Custom Function" = Table.AddColumn(#"Added Custom1", "GETActivity", each #"GET Activity"(#"GET Access Token"(), [StartDate], [EndDate], null, 0, {})),
+				    #"Removed Errors" = Table.RemoveRowsWithErrors(#"Invoked Custom Function", {"GETActivity"}),
+				#"Expanded GETActivity" = Table.ExpandListColumn(#"Removed Errors", "GETActivity"),
+				#"Expanded GETActivity1" = Table.ExpandRecordColumn(#"Expanded GETActivity", "GETActivity", {"Id", "CreationTime", "Operation", "UserKey", "UserId", "ClientIP", "UserAgent", "Activity", "ItemName", "WorkSpaceName", "WorkspaceId", "ObjectId", "IsSuccess", "RequestId", "ActivityId", "DatasetName", "ReportName", "DatasetId", "ReportId", "ReportType"}, {"Id", "CreationTime", "Operation", "UserKey", "UserId", "ClientIP", "UserAgent", "Activity", "ItemName", "WorkSpaceName", "WorkspaceId", "ObjectId", "IsSuccess", "RequestId", "ActivityId", "DatasetName", "ReportName", "DatasetId", "ReportId", "ReportType"}),
+				    #"Filtered Rows" = Table.SelectRows(#"Expanded GETActivity1", each ([Id] <> null) and ([Operation] <> "ExportActivityEvents" and [Operation] <> "GetGroupsAsAdmin") and ([ReportId] <> null)),
+				    #"Valor Substituído" = Table.ReplaceValue(#"Filtered Rows","T"," ",Replacer.ReplaceText,{"CreationTime"}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Valor Substituído",{{"StartDate", type text}, {"EndDate", type text}, {"Date", type date}, {"CreationTime", type datetimezone}, {"RequestId", type text}, {"ActivityId", type text}, {"DatasetName", type text}, {"ReportName", type text}, {"DatasetId", type text}, {"ReportId", type text}, {"ReportType", type text}, {"ObjectId", type text}, {"WorkspaceId", type text}, {"WorkSpaceName", type text}, {"ItemName", type text}, {"Activity", type text}, {"UserAgent", type text}, {"ClientIP", type text}, {"UserId", type text}, {"UserKey", type text}, {"Operation", type text}, {"Id", type text}, {"IsSuccess", type text}}),
+				    #"Invoked Custom Function1" = Table.AddColumn(#"Changed Type", "Data", each #"Get Workspaces"([WorkspaceId])),
+				    #"Expanded Data" = Table.ExpandTableColumn(#"Invoked Custom Function1", "Data", {"datasetId"}, {"Data.datasetId"}),
+				    #"Expanded Data.datasetId" = Table.ExpandRecordColumn(#"Expanded Data", "Data.datasetId", {"id", "configuredBy"}, {"Data.datasetId.id", "Data.datasetId.configuredBy"}),
+				    #"Filtered Rows1" = Table.SelectRows(#"Expanded Data.datasetId", each ([Data.datasetId.id] <> null) and ([Data.datasetId.configuredBy] = "informatica@informaticalafaete.onmicrosoft.com") and ([UserId] <> "informatica@informaticalafaete.onmicrosoft.com")),
+				    #"Filtered Rows2" = Table.SelectRows(#"Filtered Rows1", each [Activity] = "ExportReport" or [Activity] = "ViewReport"),
+				    /*     #"Linhas Filtradas" = Table.SelectRows(#"Filtered Rows1", each ([UserId] <> "2a2076b5-fb11-4c67-9c61-bf5f9b956191" and [UserId] <> "2bd9e6b3-8ebf-4d2d-ab81-7d81c2bf9a9b" and [UserId] <> "b26f7380-405d-4b92-a66f-07201f1453f1" and [UserId] <> "e22dc1c1-9d50-4072-8455-159b9ea7dddd")), */
+				    #"Data Inserida" = Table.AddColumn(#"Filtered Rows2", "Data_Ref", each DateTime.Date([CreationTime]), type date),
+				    #"Added Custom2" = Table.AddColumn(#"Data Inserida", "key_datasetId_userId", each [DatasetId] & "-" & [UserId], type text)
+				in
+				    #"Added Custom2"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navegação
+

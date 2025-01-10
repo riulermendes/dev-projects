@@ -1,0 +1,140 @@
+relationship c32c290e-44f8-4063-8ea7-74715fba751a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Datasets.createdDate
+	toColumn: LocalDateTable_89d36a23-14c8-4bc8-b2d7-1d87e4bfb312.Date
+
+relationship 455b047e-d4f0-4cae-84b8-ff448fa56308
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Reports.createdDateTime
+	toColumn: LocalDateTable_040cbf7f-9611-46bb-9e92-426ad4add322.Date
+
+relationship 5b60e334-0eb0-4ab0-9ba3-fa8326dcd82d
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Reports.modifiedDateTime
+	toColumn: LocalDateTable_296180e6-326a-454c-aed8-0d0e61e8c0a2.Date
+
+relationship c1ed7cc3-451b-4fb6-857e-f1fc3184d5f5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Activity.Date
+	toColumn: LocalDateTable_28a49221-bc6a-4b7d-a107-524b87363f85.Date
+
+relationship 586e44cc-74e9-4294-b5f2-93476fcbeb6e
+	joinOnDateBehavior: datePartOnly
+	fromColumn: F_Update_DataFlow.endTime
+	toColumn: LocalDateTable_41290b48-fba4-4f86-846c-f79a1caf272e.Date
+
+relationship b3fc8fde-b42a-4cb1-b85c-bd3b215a0b69
+	joinOnDateBehavior: datePartOnly
+	fromColumn: F_Update_DataSet.endTime
+	toColumn: LocalDateTable_13f78f80-6c0a-4778-a877-5a98b1337bf6.Date
+
+relationship AutoDetected_34a9c3ac-8290-4f06-9ecf-a39cce2e9260
+	isActive: false
+	fromColumn: F_Update_DataFlow.dataflowId
+	toColumn: Dataflows.dataflowId
+
+relationship ba35d9a7-955e-46f3-9740-e733d7292477
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Activity.Data_Ajustada
+	toColumn: LocalDateTable_45411140-cfa6-4f4a-8a66-8852a4619a38.Date
+
+relationship 535f42f6-be0f-4ede-9d08-488fe58ee0fe
+	fromColumn: Activity.Data_Ref
+	toColumn: WEB_D_CALENDARIO.Datas
+
+relationship 68e0c79d-f51d-47b5-981f-1b389e7bb217
+	joinOnDateBehavior: datePartOnly
+	fromColumn: F_Update_DataFlow.startTime
+	toColumn: LocalDateTable_f94bf9aa-80ef-4627-afe0-d202e40a81ba.Date
+
+relationship 0b3117b8-612a-4944-9e47-8fcf9ca7ba2c
+	joinOnDateBehavior: datePartOnly
+	fromColumn: F_Update_DataSet.startTime
+	toColumn: LocalDateTable_88ce7f59-ef77-41b9-9a4b-e9cd14f19ec8.Date
+
+relationship a48278cd-262e-4c63-8f67-841c17e1ce39
+	fromColumn: F_Update_DataFlow.DATE_REF
+	toColumn: WEB_D_CALENDARIO.Datas
+
+relationship a7fc70d7-bd9a-4619-8c34-53d4f8f1caf0
+	fromColumn: F_Update_DataSet.DATE_REF
+	toColumn: WEB_D_CALENDARIO.Datas
+
+relationship 5fcf270f-cbbc-45a6-a130-f19efa37fb70
+	joinOnDateBehavior: datePartOnly
+	fromColumn: BS_F_TAREFAS_PROGRAMADAS.EXECUTADO
+	toColumn: LocalDateTable_f7cca1f5-6ff4-436f-8981-77626b0a27d3.Date
+
+relationship 1385e34a-b5d6-47c2-99c8-0adeb91bda0f
+	joinOnDateBehavior: datePartOnly
+	fromColumn: BS_F_TAREFAS_PROGRAMADAS.INICIADO
+	toColumn: LocalDateTable_3f5d227a-c593-4d10-9b77-d7e527f90ae3.Date
+
+relationship 53325fb0-e6ad-49cc-a9a3-21b907d93122
+	joinOnDateBehavior: datePartOnly
+	fromColumn: BS_F_TAREFAS_PROGRAMADAS.CRIADO
+	toColumn: LocalDateTable_8a41e724-a3cf-411a-8d6a-4f82e130a7ee.Date
+
+relationship f50af5c7-0434-41ff-b944-b17c2d44a94a
+	joinOnDateBehavior: datePartOnly
+	fromColumn: BS_F_TAREFAS_PROGRAMADAS.ENVIADO
+	toColumn: LocalDateTable_937f4af1-a084-4829-b5f3-18424fd99559.Date
+
+relationship 1158128a-fe33-1d52-61e1-8265ff6908bc
+	fromColumn: BS_F_TAREFAS_PROGRAMADAS.DATA_REF
+	toColumn: WEB_D_CALENDARIO.Datas
+
+relationship 4b2f12b5-c27b-4823-8afc-52e9cdc713e7
+	joinOnDateBehavior: datePartOnly
+	fromColumn: LastUpDate.Date
+	toColumn: LocalDateTable_3a7c981d-e771-4e0e-9be9-3fd9de206420.Date
+
+relationship 0cacaa43-1237-43d2-9ed7-cba17a49021d
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Activity.CreationTime
+	toColumn: LocalDateTable_5e908abc-e1f0-48fb-8f79-388972360ab1.Date
+
+relationship 2733fb7e-0e29-559f-bc22-88bbde55a10e
+	fromColumn: Datasets.WorkspaceId
+	toColumn: D_Workspaces.WorkspaceId
+
+relationship 740f4420-d0b6-7717-e7a1-2521718f7083
+	fromColumn: AccessDataset.UserId
+	toColumn: Users.UserId
+
+relationship 98c75b04-d053-e539-7803-b46ce5f14189
+	fromColumn: AccessDataset.datasetId
+	toColumn: Datasets.datasetId
+
+relationship 39004a15-580a-4ad0-15bc-e27181bf6dc1
+	fromColumn: Activity.key_datasetId_userId
+	toColumn: AccessDataset.key_datasetId_userId
+
+relationship b58a06e2-326b-d804-10bf-5327f5fc6c5f
+	crossFilteringBehavior: bothDirections
+	fromColumn: Activity.ReportId
+	toColumn: Reports.reportId
+
+relationship d4667536-610e-4838-8067-50964db80708
+	joinOnDateBehavior: datePartOnly
+	fromColumn: LastUpDate.Data_Ajustada
+	toColumn: LocalDateTable_31a72a35-adf4-4bbd-b105-0a002d861257.Date
+
+relationship fa3beecc-454a-40f8-8546-a450e675fb8d
+	joinOnDateBehavior: datePartOnly
+	fromColumn: LastUpDate.LastUpDate
+	toColumn: LocalDateTable_0cb367c4-d981-46fd-a33d-a62d3165a670.Date
+
+relationship a0d55c5d-607b-44de-995f-07b4e1a0c7c9
+	joinOnDateBehavior: datePartOnly
+	fromColumn: F_Disable_Dataset.DATA_REF
+	toColumn: LocalDateTable_003a05d4-9687-4118-acec-e212175fb37c.Date
+
+relationship 1dc0d452-1f56-6eee-14d7-85c00e559a3f
+	fromColumn: F_Update_DataSet.datasetId
+	toColumn: F_Disable_Dataset.datasetId
+
+relationship 60e39072-a96e-f3bc-a99f-33066d49af8a
+	fromColumn: F_Update_DataSet.datasetId
+	toColumn: Datasets.datasetId
+
